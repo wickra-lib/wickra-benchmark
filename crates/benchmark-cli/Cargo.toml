@@ -1,0 +1,26 @@
+[package]
+name = "wickra-benchmark-cli"
+description = "Reference command-line runner over benchmark-core: recompute a curated case or suite against its datasets and report pass/hash-match, exiting non-zero on any failure for use in CI pipelines."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[lints]
+workspace = true
+
+[[bin]]
+name = "wickra-benchmark"
+path = "src/main.rs"
+
+[dependencies]
+# The deterministic benchmark core (runner + CSV loading + canonical JSON).
+benchmark-core.workspace = true
+serde_json.workspace = true
+clap.workspace = true
