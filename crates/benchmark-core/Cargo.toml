@@ -1,0 +1,40 @@
+[package]
+name = "benchmark-core"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme.workspace = true
+keywords.workspace = true
+categories.workspace = true
+description = "Deterministic core of wickra-benchmark: recompute a curated (strategy, dataset) case with the pinned wickra-backtest engine and confirm its report and hash against the frozen expectation."
+
+[dependencies]
+# The backtest engine (run + version); recompute a case's report with it.
+wickra-backtest-core.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+toml.workspace = true
+thiserror.workspace = true
+# The canonical report hash (same canonicalization as wickra-proof).
+blake3.workspace = true
+# Parallel suite execution; optional so the sequential WASM path can drop it and
+# still be byte-identical (proven by the parallel-equals-sequential test).
+rayon = { workspace = true, optional = true }
+
+[features]
+default = ["parallel"]
+# When on, run_suite executes cases concurrently via rayon; the results are
+# always re-sorted by id afterwards, so the report is byte-identical to the
+# sequential path.
+parallel = ["dep:rayon"]
+
+[dev-dependencies]
+serde_json.workspace = true
+proptest.workspace = true
+
+[lints]
+workspace = true
