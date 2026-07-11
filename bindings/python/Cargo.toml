@@ -1,0 +1,25 @@
+[package]
+name = "wickra-benchmark-python"
+description = "Python bindings for wickra-benchmark: recompute a curated case or suite and confirm its report and hash deterministically."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme = "README.md"
+keywords.workspace = true
+categories.workspace = true
+publish = false
+
+[lib]
+name = "_wickra_benchmark"
+crate-type = ["cdylib"]
+
+[lints]
+workspace = true
+
+[dependencies]
+benchmark-core = { workspace = true }
+pyo3 = { version = "0.29", features = ["extension-module", "abi3-py39"] }

@@ -1,0 +1,46 @@
+[build-system]
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "wickra-benchmark"
+version = "0.1.0"
+description = "A reproducible, golden-verified benchmark suite for quant backtests: recompute a curated case or suite with the deterministic Wickra engine and confirm its report and hash."
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+authors = [{ name = "kingchenc", email = "support@wickra.org" }]
+requires-python = ">=3.9"
+keywords = ["trading", "backtest", "benchmark", "determinism", "reproducibility"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Rust",
+    "Topic :: Office/Business :: Financial :: Investment",
+]
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[project.urls]
+Homepage = "https://github.com/wickra-lib/wickra-benchmark"
+Repository = "https://github.com/wickra-lib/wickra-benchmark"
+Issues = "https://github.com/wickra-lib/wickra-benchmark/issues"
+
+[tool.maturin]
+manifest-path = "Cargo.toml"
+python-source = "python"
+module-name = "wickra_benchmark._wickra_benchmark"
+features = ["pyo3/extension-module"]
+strip = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -q"
