@@ -1,0 +1,34 @@
+[package]
+name = "wickra-benchmark-wasm"
+description = "WebAssembly bindings for wickra-benchmark — recompute a curated case or suite and confirm its report and hash, in the browser."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme = "README.md"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+# Modern rustc emits a wasm feature set (bulk-memory, sign-ext, …) that the
+# wasm-opt bundled with wasm-pack is too old to validate. The wasm-bindgen output
+# is already valid and functional; skip the optional size-only optimizer pass.
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
+
+[lints]
+workspace = true
+
+[dependencies]
+# The benchmark core as a direct path dep (not `workspace = true`) so
+# `default-features = false` is honored — cargo silently ignores it on an
+# inherited workspace dependency. Dropping the default `parallel` feature runs
+# the suite sequentially (no rayon thread pool in a browser sandbox), which is
+# byte-identical to the native parallel run — the exact cross-language golden
+# check.
+benchmark-core = { path = "../../crates/benchmark-core", version = "0.1.0", default-features = false }
+wasm-bindgen = "0.2"
