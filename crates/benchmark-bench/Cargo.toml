@@ -1,0 +1,36 @@
+[package]
+name = "benchmark-bench"
+description = "Criterion benchmarks for the Wickra benchmark core: run_suite scaling by case count, and the parallel (rayon) vs sequential runner."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+publish = false
+
+[lints]
+workspace = true
+
+[features]
+# On by default: forward the core's parallel (rayon) runner. Turn it off
+# (`--no-default-features`) to bench the sequential path — the reports are
+# byte-identical, so this measures only the scheduling difference.
+default = ["parallel"]
+parallel = ["benchmark-core/parallel"]
+
+[dependencies]
+# Path (not workspace) dep so `default-features = false` actually takes effect —
+# that is what lets `--no-default-features` here select the sequential runner.
+benchmark-core = { path = "../benchmark-core", default-features = false }
+# Bless benchmark cases with the real engine so the benchmarked run is a genuine
+# recompute, not a synthetic shape.
+wickra-backtest-core.workspace = true
+serde_json.workspace = true
+
+[dev-dependencies]
+criterion.workspace = true
+
+[[bench]]
+name = "benchmark"
+harness = false
