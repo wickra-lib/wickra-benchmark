@@ -22,7 +22,7 @@ parallel = ["benchmark-core/parallel"]
 [dependencies]
 # Path (not workspace) dep so `default-features = false` actually takes effect —
 # that is what lets `--no-default-features` here select the sequential runner.
-benchmark-core = { path = "../benchmark-core", default-features = false }
+benchmark-core = { path = "../benchmark-core", version = "0.1.0", default-features = false }
 # Bless benchmark cases with the real engine so the benchmarked run is a genuine
 # recompute, not a synthetic shape.
 wickra-backtest-core.workspace = true
