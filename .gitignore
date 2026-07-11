@@ -53,3 +53,6 @@ bindings/r/..Rcheck/
 .env.*
 *.key
 secrets/
+
+# Java example build output
+examples/java/out/

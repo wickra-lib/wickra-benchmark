@@ -1,0 +1,18 @@
+[package]
+name = "wickra-benchmark-example"
+description = "A runnable Rust example for the Wickra benchmark core."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[lints]
+workspace = true
+
+[[bin]]
+name = "run"
+path = "src/main.rs"
+
+[dependencies]
+benchmark-core = { workspace = true }
