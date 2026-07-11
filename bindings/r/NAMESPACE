@@ -1,0 +1,4 @@
+useDynLib(wickrabenchmark, .registration = TRUE, .fixes = "C_")
+export(wkbench_version)
+export(wkbench_new)
+export(wkbench_command)

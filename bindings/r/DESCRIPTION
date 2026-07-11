@@ -1,0 +1,17 @@
+Package: wickrabenchmark
+Type: Package
+Title: Reproducible Quant-Research Benchmark
+Version: 0.1.0
+Authors@R: person("kingchenc", role = c("aut", "cre"), email = "support@wickra.org")
+Description: R bindings for wickra-benchmark over its C ABI hub: create a
+    benchmark runner, recompute a curated case or suite with the deterministic
+    Wickra engine and confirm its report and hash - the same protocol as the CLI
+    and every other binding.
+License: MIT + file LICENSE | Apache License 2.0
+URL: https://github.com/wickra-lib/wickra-benchmark
+BugReports: https://github.com/wickra-lib/wickra-benchmark/issues
+Encoding: UTF-8
+NeedsCompilation: yes
+SystemRequirements: the wickra-benchmark C ABI shared library (WKBENCH_LIB) and
+    its header (WKBENCH_INC).
+RoxygenNote: 7.3.2
