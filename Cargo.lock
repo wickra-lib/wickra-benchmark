@@ -747,6 +747,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "wickra-benchmark-c"
+version = "0.1.0"
+dependencies = [
+ "benchmark-core",
+]
+
+[[package]]
 name = "wickra-benchmark-cli"
 version = "0.1.0"
 dependencies = [
