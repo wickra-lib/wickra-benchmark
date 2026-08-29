@@ -7,12 +7,21 @@
 [![CI](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/ci.svg)](https://github.com/wickra-lib/wickra-benchmark/actions/workflows/ci.yml)
 [![CodeQL](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/codeql.svg)](https://github.com/wickra-lib/wickra-benchmark/actions/workflows/codeql.yml)
 [![codecov](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/codecov.svg)](https://codecov.io/gh/wickra-lib/wickra-benchmark)
+[![GitHub release](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/release.svg)](https://github.com/wickra-lib/wickra-benchmark/releases/latest)
+[![crates.io](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/crates.svg)](https://crates.io/crates/wickra-benchmark-cli)
+[![PyPI](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/pypi.svg)](https://pypi.org/project/wickra-benchmark/)
+[![npm](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/npm.svg)](https://www.npmjs.com/package/wickra-benchmark)
+[![NuGet](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/nuget.svg)](https://www.nuget.org/packages/Wickra.Benchmark)
+[![Maven Central](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/maven.svg)](https://central.sonatype.com/artifact/org.wickra/wickra-benchmark)
+[![Go module](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/go.svg)](https://pkg.go.dev/github.com/wickra-lib/wickra-benchmark-go)
+[![R-universe](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/r-universe.svg)](https://wickra-lib.r-universe.dev)
 [![License: MIT OR Apache-2.0](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/license.svg)](#license)
 [![OpenSSF Scorecard](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/scorecard.svg)](https://scorecard.dev/viewer/?uri=github.com/wickra-lib/wickra-benchmark)
-[![OpenSSF Best Practices](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/best-practices.svg)](https://www.bestpractices.dev/)
+[![OpenSSF Best Practices](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/best-practices.svg)](https://www.bestpractices.dev)
 [![Build provenance](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/provenance.svg)](https://github.com/wickra-lib/wickra-benchmark/attestations)
-[![Reproduced across 10 languages](https://img.shields.io/badge/reproduced%20across-10%20languages-3b82f6)](#reproduce-the-suite-in-any-language)
 [![Docs](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/docs.svg)](https://wickra.org)
+[![Verified across 10 languages](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/verified.svg)](golden/)
+[![Reproduced across 10 languages](https://img.shields.io/badge/reproduced%20across-10%20languages-3b82f6)](#reproduce-the-suite-in-any-language)
 
 ---
 
@@ -210,3 +219,26 @@ future performance of any strategy, nor about whether the data is representative
 of any market. Trading carries risk; you are responsible for your own decisions.
 `wickra-benchmark` is free software you run yourself: no hosted service, no data
 collection, no warranty.
+
+---
+
+<p align="center">
+  <a href="https://github.com/wickra-lib/wickra-benchmark">
+    <img alt="GitHub stars" src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/stars.svg">
+  </a>
+  <a href="https://github.com/wickra-lib/wickra-benchmark/network/members">
+    <img alt="GitHub forks" src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/forks.svg">
+  </a>
+  <a href="https://github.com/wickra-lib/wickra-benchmark/issues">
+    <img alt="GitHub issues" src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/issues.svg">
+  </a>
+</p>
+
+<p align="center">
+  Built on <a href="https://github.com/wickra-lib/wickra">Wickra</a>. If it saved you time, the cheapest way to say thanks is to ⭐ the repo.
+</p>
+
+<p align="center">
+  <img alt="wickra-benchmark star history" width="640"
+       src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/star-history.svg">
+</p>

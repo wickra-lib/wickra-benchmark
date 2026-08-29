@@ -22,4 +22,7 @@ exclude = [
     "^https?://pypi\\.org/project/wickra-benchmark",
     "^https?://www\\.npmjs\\.com/package/wickra-benchmark",
     "^https?://pkg\\.go\\.dev/github\\.com/wickra-lib/wickra-benchmark-go",
+    "^https?://crates\\.io/crates/wickra-benchmark-cli",
+    "^https?://www\\.nuget\\.org/packages/Wickra\\.Benchmark",
+    "^https?://central\\.sonatype\\.com/artifact/org\\.wickra/wickra-benchmark",
 ]
