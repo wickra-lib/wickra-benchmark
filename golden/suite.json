@@ -383,6 +383,8 @@
           "win_rate": 0.0
         },
         "schema_version": 1,
+        "symbol": "BTCUSDT",
+        "timeframe": "1h",
         "trades": [
           {
             "entry_price": 117.09670917775576,
@@ -416,7 +418,7 @@
           }
         ]
       },
-      "expected_hash": "f01503749d128ce9bcd38210fb092c1b18cb9d6bc3aa76d790f5ff4be32471d1"
+      "expected_hash": "8f5e84ff8862418dd4ac00f1889c0e4822438ecc03e800b5d564a13783aba919"
     },
     {
       "id": "rsi-mean-reversion-01",
@@ -794,6 +796,8 @@
           "win_rate": 100.0
         },
         "schema_version": 1,
+        "symbol": "BTCUSDT",
+        "timeframe": "1h",
         "trades": [
           {
             "entry_price": 85.7431140854356,
@@ -817,7 +821,7 @@
           }
         ]
       },
-      "expected_hash": "13102d9bc5986a757408682fcd04ad9406c912dee1d4a3ea9db70ab636cb0072"
+      "expected_hash": "664558550a58bddf2045f4493bfcb94ee1e85060c3821c5db1927a8350a23fe2"
     },
     {
       "id": "ema-trend-follow-01",
@@ -1201,6 +1205,8 @@
           "win_rate": 40.0
         },
         "schema_version": 1,
+        "symbol": "BTCUSDT",
+        "timeframe": "1h",
         "trades": [
           {
             "entry_price": 106.12333563583495,
@@ -1254,7 +1260,7 @@
           }
         ]
       },
-      "expected_hash": "aed9687bc6024a10b4939aa895ebc4ff9023535dc681decb9e53ce502e58263d"
+      "expected_hash": "97a97c31a40051dd64145cd5bb5dbb218a857c41789bc8d0bf2a4fb1c44efd75"
     },
     {
       "id": "breakout-channel-01",
@@ -1636,6 +1642,8 @@
           "win_rate": 16.666666666666664
         },
         "schema_version": 1,
+        "symbol": "BTCUSDT",
+        "timeframe": "1d",
         "trades": [
           {
             "entry_price": 100.02,
@@ -1759,7 +1767,7 @@
           }
         ]
       },
-      "expected_hash": "7993bd2067c298f18a69182c1d9e193fb92e439c1ed5802f08f26393ee3112c3"
+      "expected_hash": "2b1ef11f989c32683bdf38374a547eea9504f0ee720f44c6c15cbff9f4eef45e"
     },
     {
       "id": "buy-and-hold-01",
@@ -2054,6 +2062,8 @@
           "win_rate": 100.0
         },
         "schema_version": 1,
+        "symbol": "BTCUSDT",
+        "timeframe": "1h",
         "trades": [
           {
             "entry_price": 100.02,
@@ -2067,7 +2077,7 @@
           }
         ]
       },
-      "expected_hash": "18be71ee31b22f7e000f773481b1ebbe7390a4b1515ea74de0d11f0dd927b5a7"
+      "expected_hash": "c1f6820a3de2d3a6659b97ea94f39e120fdc50a2b5cad1deaac9c2870d5172e0"
     }
   ]
 }

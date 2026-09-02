@@ -4,6 +4,9 @@
 //! the Rust anchor of the cross-language determinism guarantee; the ten bindings
 //! assert the same bytes. It also checks the semantic promise: every blessed
 //! `run_case`/`run_suite` fixture reproduces (`passed`/`hash_match`, `failed:0`).
+//!
+//! A missing expected file is written (bless mode) so the corpus can be
+//! regenerated after an intended change; a present file is asserted byte-for-byte.
 
 use benchmark_core::Benchmark;
 use serde_json::Value;
@@ -33,7 +36,22 @@ fn golden_commands_are_byte_identical() {
         // Drive the exact canonical command surface the bindings use.
         let got = benchmark.command_json(&cmd_json).unwrap();
 
-        let expected = fs::read_to_string(dir.join("expected").join(&name)).unwrap();
+        // A missing expected file is written rather than asserted, so the corpus
+        // can be regenerated after an intended change by removing it and
+        // re-running. A present one is held to byte equality, which is what
+        // pins the ten bindings to the same output.
+        let expected_path = dir.join("expected").join(&name);
+        if !expected_path.exists() {
+            fs::write(
+                &expected_path,
+                format!(
+                    "{got}
+"
+                ),
+            )
+            .unwrap();
+        }
+        let expected = fs::read_to_string(&expected_path).unwrap();
         assert_eq!(
             got.trim(),
             expected.trim(),

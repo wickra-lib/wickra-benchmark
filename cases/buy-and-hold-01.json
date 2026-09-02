@@ -291,6 +291,8 @@
       "win_rate": 100.0
     },
     "schema_version": 1,
+    "symbol": "BTCUSDT",
+    "timeframe": "1h",
     "trades": [
       {
         "entry_price": 100.02,
@@ -304,5 +306,5 @@
       }
     ]
   },
-  "expected_hash": "18be71ee31b22f7e000f773481b1ebbe7390a4b1515ea74de0d11f0dd927b5a7"
+  "expected_hash": "c1f6820a3de2d3a6659b97ea94f39e120fdc50a2b5cad1deaac9c2870d5172e0"
 }
