@@ -96,7 +96,7 @@ updates:
   # C# binding (NuGet). The published wrapper is a thin C-ABI wrapper with no
   # external packages; the test project pulls xunit and Microsoft.NET.Test.Sdk.
   - package-ecosystem: nuget
-    directory: "/bindings/csharp/WickraVerify.Tests"
+    directory: "/bindings/csharp/WickraBenchmark.Tests"
     schedule:
       interval: monthly
       time: "06:00"
@@ -124,4 +124,57 @@ updates:
       prefix: "deps(gomod)"
     groups:
       go-binding:
+        patterns: ["*"]
+
+  # The fuzz harness sets its own [workspace] so cargo-fuzz can build it with
+  # sanitizer flags, which also puts it outside the entry above -- and outside
+  # `cargo deny`. It names libfuzzer-sys and the engine directly, and the engine
+  # source has to stay identical to the workspace's: two wickra-backtest-core
+  # crates in one graph share no types and the targets stop compiling.
+  - package-ecosystem: cargo
+    directory: "/fuzz"
+    schedule:
+      interval: monthly
+      time: "06:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: "deps(fuzz)"
+    groups:
+      fuzz:
+        patterns: ["*"]
+
+  # The runnable Node example pins the published package rather than the local
+  # binding, so nothing else watches its lockfile.
+  - package-ecosystem: npm
+    directory: "/examples/node"
+    schedule:
+      interval: monthly
+      time: "06:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: "deps(npm)"
+    groups:
+      node-example:
+        patterns: ["*"]
+
+  # Same for the Go example: its own module, its own go.sum.
+  - package-ecosystem: gomod
+    directory: "/examples/go"
+    schedule:
+      interval: monthly
+      time: "06:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: "deps(gomod)"
+    groups:
+      go-example:
         patterns: ["*"]
