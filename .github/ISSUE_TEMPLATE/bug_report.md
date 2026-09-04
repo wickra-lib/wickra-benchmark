@@ -9,21 +9,27 @@ labels: bug
 A clear description of what is wrong.
 
 **Reproduction**
-The smallest input that reproduces the problem — a `ScanSpec` and a small sample
-universe, or the exact `command` JSON.
+The smallest input that reproduces the problem — a `BenchmarkCase` and the
+dataset it names, or the exact `command` JSON.
 
 ```
-# paste a minimal repro here (spec + a few candles / a command JSON)
+# paste a minimal repro here (a case + its dataset rows, or a command JSON)
 ```
 
 **Expected vs actual**
 - Expected: …
 - Actual: …
 
+**Which of the two booleans moved**
+`passed` and `hash_match` are independent. Both false usually means the engine
+changed; only `hash_match` false means a case's `expected` and `expected_hash`
+disagree with each other.
+
 **Environment**
 - `wickra-benchmark` version:
+- Engine version (the `version` command):
 - Language / binding (Rust, Python, Node.js, WASM, C, C++, C#, Go, Java, R):
-- Mode (batch `scan_batch` / streaming):
+- Runner (parallel default / sequential `--no-default-features`):
 - OS:
 
 **Additional context**

@@ -22,13 +22,10 @@ allow = [
 ]
 confidence-threshold = 0.93
 
-# Scoped license exceptions for individual permissive / public-domain crates:
-#   - webpki-roots (CDLA-Permissive-2.0): the Mozilla CA certificate bundle as
-#     data, pulled in transitively by the exchange's rustls TLS stack (only
-#     under the optional `live` universe feature).
-exceptions = [
-    { allow = ["CDLA-Permissive-2.0"], crate = "webpki-roots" },
-]
+# No scoped license exceptions. Everything in the graph resolves under the
+# allow-list above; this crate recomputes reports locally and pulls in no TLS
+# stack, so there is no CA-bundle crate to except.
+exceptions = []
 
 [bans]
 multiple-versions = "warn"
