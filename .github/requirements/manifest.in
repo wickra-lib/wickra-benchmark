@@ -1,0 +1,8 @@
+# The one dependency of the dataset-manifest job: the blake3 implementation the
+# manifest digests are computed with. Locked output: manifest.txt.
+# Refresh via scripts/update-lockfiles.sh.
+#
+# Pinned and hash-checked like the rest, because this job is what stands between
+# an edited dataset and a silently changed case hash -- installing its checker
+# from an unpinned resolve would undercut the guarantee it exists to make.
+blake3

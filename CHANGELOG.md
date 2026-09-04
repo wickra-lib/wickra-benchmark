@@ -33,6 +33,15 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   covers, and `Ecosystem`.
 - Dependabot entries for `fuzz/`, `examples/node/` and `examples/go/`, whose
   manifests had no watcher.
+- `actionlint` workflow (with shellcheck over every `run:` block) and a CodSpeed
+  workflow that measures the Criterion benches under instruction counting and
+  attributes a regression to the pull request that caused it.
+- `.github/codeql/codeql-config.yml`, and C#, Java, Go and C/C++ in the CodeQL
+  matrix — the four compiled surfaces, each built for real, since `build-mode:
+  none` resolves no dependencies and GitHub then reports the analysis as low
+  quality.
+- `bindings/python/tests/run_without_pytest.py`, which runs the whole Python
+  suite without a framework.
 
 ### Changed
 
@@ -43,6 +52,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `fuzz/` detaches from the workspace and resolves the engine on its own, so it
   names the same source — otherwise the graph carries two `wickra-backtest-core`
   crates whose types do not interoperate and the targets stop compiling.
+- Every workflow job declares `timeout-minutes` (20 of them did not), and every
+  action pin carries a patch-level comment. `Swatinem/rust-cache` was pinned to a
+  commit that is not any v2.x release tag, which is why its comment could only
+  say `v2`; it now points at the tagged 2.9.2.
+- `ci.yml` filters `pull_request` to `main`, so a pull request against another
+  branch no longer builds the whole matrix twice.
 - Blessing is one step and writes every copy of the corpus from the same value:
   `WICKRA_BLESS=1 cargo test -p benchmark-core --test golden`. Objects land with
   their keys sorted, so an authored `strategy` is normalised on the way in.
@@ -57,6 +72,17 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   path from a sibling repository that does not exist here, so it silently
   matched nothing — the repository has never received a NuGet update PR. It now
   points at `WickraBenchmark.Tests`.
+- `.github/requirements/ci-dev.txt` was hash-locked, committed, and read by
+  nothing: the Python job installed `maturin pytest` unpinned instead. It could
+  not have been wired as it stood — it pinned pytest 9.1.1, which requires
+  Python 3.10, while the matrix includes 3.9. It is now split into
+  `ci-dev-py39.txt` (no pytest at all) and `ci-dev-py3.txt`, both installed with
+  `--require-hashes`. No module in `bindings/python/tests` imports pytest, so
+  the 3.9 row runs the same eight tests through `run_without_pytest.py` rather
+  than pinning a pytest 8.x below the fix for GHSA-6w46-j5rx-g56g.
+- The dataset-manifest job installed `blake3` unpinned. That job is what stands
+  between an edited dataset and a silently changed case hash, so its checker now
+  comes from a hash-locked `manifest.txt`.
 - Four documents and two config files described a different product: the bug
   report, pull request, `GOVERNANCE` and `SUPPORT` templates asked for a
   `ScanSpec` and a sample universe (`wickra-screener` concepts), `clippy.toml`

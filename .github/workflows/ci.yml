@@ -3,7 +3,11 @@ name: CI
 on:
   push:
     branches: [main]
+  # Filtered to main: without it every pull request against every branch builds
+  # the whole matrix, so a stacked or long-lived branch pays for the full run
+  # twice — once against its base and again when that base merges.
   pull_request:
+    branches: [main]
 
 permissions:
   contents: read
@@ -21,6 +25,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
         features: ["--all-features", "--no-default-features"]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30 # backstop against a hung job, not a budget
     # The CLI binary (wickra-benchmark) and the C ABI cdylib (wickra_benchmark) share a
     # stem on Windows, so building both in one --workspace pass can race on the
     # same .pdb and trip LNK1201. Dropping debug info (tests do not need it)
@@ -33,7 +38,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-rust
-      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       # The PyO3 extension cdylib is built and tested by the `python` job via
       # maturin; the C ABI cdylib by the `c-abi` job. Exclude both here.
       - run: cargo build --workspace ${{ matrix.features }} --exclude wickra-benchmark-python --exclude wickra-benchmark-c
@@ -42,6 +47,7 @@ jobs:
   lint:
     name: Format & Clippy
     runs-on: ubuntu-latest
+    timeout-minutes: 20 # backstop against a hung job, not a budget
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -49,7 +55,7 @@ jobs:
       - uses: ./.github/actions/setup-rust
         with:
           components: rustfmt, clippy
-      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       - run: cargo fmt --all -- --check
       - run: cargo clippy --workspace --all-targets --all-features -- -D warnings
       - run: cargo clippy --workspace --all-targets --no-default-features -- -D warnings
@@ -57,6 +63,7 @@ jobs:
   msrv:
     name: MSRV workspace (1.86)
     runs-on: ubuntu-latest
+    timeout-minutes: 20 # backstop against a hung job, not a budget
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -64,7 +71,7 @@ jobs:
       - uses: ./.github/actions/setup-rust
         with:
           toolchain: "1.86"
-      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       # The Node binding (napi 3) needs Rust 1.88 and is checked separately; the
       # Python binding needs maturin's platform link flags and is built by the
       # `python` job. The library, CLI, C ABI and WASM stay at 1.86.
@@ -76,6 +83,7 @@ jobs:
   msrv-node:
     name: MSRV node (1.88)
     runs-on: ubuntu-latest
+    timeout-minutes: 20 # backstop against a hung job, not a budget
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -83,12 +91,13 @@ jobs:
       - uses: ./.github/actions/setup-rust
         with:
           toolchain: "1.88"
-      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       - run: cargo build -p wickra-benchmark-node
 
   supply-chain:
     name: cargo-deny
     runs-on: ubuntu-latest
+    timeout-minutes: 20 # backstop against a hung job, not a budget
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -101,6 +110,7 @@ jobs:
   coverage:
     name: Coverage
     runs-on: ubuntu-latest
+    timeout-minutes: 30 # backstop against a hung job, not a budget
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -108,7 +118,7 @@ jobs:
       - uses: ./.github/actions/setup-rust
         with:
           components: llvm-tools-preview
-      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@3d7d7cd5ac7f994c1892ae0c06165095b9139094 # v2.85.1
         with:
@@ -135,6 +145,7 @@ jobs:
   fuzz-smoke:
     name: Fuzz (smoke)
     runs-on: ubuntu-latest
+    timeout-minutes: 30 # backstop against a hung job, not a budget
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -142,7 +153,7 @@ jobs:
       - uses: ./.github/actions/setup-rust
         with:
           toolchain: nightly
-      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
         with:
           workspaces: fuzz
       - name: Install cargo-fuzz
@@ -170,6 +181,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ["3.9", "3.11", "3.12", "3.13"]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30 # backstop against a hung job, not a budget
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -178,12 +190,35 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - uses: ./.github/actions/setup-rust
-      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
-      - run: pip install maturin pytest
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+      # The hash-locked set, not a bare `pip install maturin pytest`. Two of
+      # them: pytest 9 requires Python 3.10, so a single lock cannot install on
+      # the 3.9 row at all -- which is why the previous one, though committed
+      # and hash-pinned, was never wired to anything.
+      - name: Install the locked dev dependencies
+        shell: bash
+        run: |
+          if [ "${{ matrix.python-version }}" = "3.9" ]; then
+            python -m pip install --require-hashes -r .github/requirements/ci-dev-py39.txt
+          else
+            python -m pip install --require-hashes -r .github/requirements/ci-dev-py3.txt
+          fi
       - run: maturin build --out dist
         working-directory: bindings/python
+      # The wheel this job just built, from disk with the network switched off.
+      # There is no hash to pin it to: it does not exist until the line above
+      # runs.
       - run: pip install --no-index --find-links bindings/python/dist wickra-benchmark
-      - run: pytest bindings/python/tests -q
+      # No module here imports pytest, so the 3.9 row runs the same tests
+      # without it rather than pinning a vulnerable pytest 8.x to reach them.
+      - name: Run the Python tests
+        shell: bash
+        run: |
+          if [ "${{ matrix.python-version }}" = "3.9" ]; then
+            python bindings/python/tests/run_without_pytest.py
+          else
+            pytest bindings/python/tests -q
+          fi
 
   node:
     name: Node ${{ matrix.node-version }} on ${{ matrix.os }}
@@ -193,12 +228,13 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         node-version: ["22", "24"]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30 # backstop against a hung job, not a budget
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-rust
-      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: ${{ matrix.node-version }}
@@ -221,6 +257,7 @@ jobs:
   wasm:
     name: WASM
     runs-on: ubuntu-latest
+    timeout-minutes: 30 # backstop against a hung job, not a budget
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -228,7 +265,7 @@ jobs:
       - uses: ./.github/actions/setup-rust
         with:
           targets: wasm32-unknown-unknown
-      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       - name: Install wasm-pack
         uses: taiki-e/install-action@3d7d7cd5ac7f994c1892ae0c06165095b9139094 # v2.85.1
         with:
@@ -252,12 +289,13 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30 # backstop against a hung job, not a budget
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-rust
-      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       - name: Install cbindgen
         uses: taiki-e/install-action@3d7d7cd5ac7f994c1892ae0c06165095b9139094 # v2.85.1
         with:
@@ -290,6 +328,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30 # backstop against a hung job, not a budget
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -299,7 +338,7 @@ jobs:
           go-version: "stable"
           cache: false
       - uses: ./.github/actions/setup-rust
-      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       - name: Build the C ABI library
         run: cargo build -p wickra-benchmark-c --release
       - name: Vendored header in sync with the C ABI
@@ -347,12 +386,13 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30 # backstop against a hung job, not a budget
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-rust
-      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           dotnet-version: "8.0"
@@ -370,12 +410,13 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30 # backstop against a hung job, not a budget
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-rust
-      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       # The pom points native.lib.dir at target/debug, so build the debug profile.
       - name: Build the C ABI library
         run: cargo build -p wickra-benchmark-c
@@ -394,6 +435,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30 # backstop against a hung job, not a budget
     env:
       WKBENCH_INC: ${{ github.workspace }}/bindings/c/include
       WKBENCH_LIB: ${{ github.workspace }}/target/release
@@ -402,7 +444,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-rust
-      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       - name: Build the C ABI library
         run: cargo build -p wickra-benchmark-c --release
       - uses: r-lib/actions/setup-r@d3c5be51b12e724e68f33216ca3c148b66d5f0b6 # v2.12.1
@@ -418,7 +460,10 @@ jobs:
           export WKBENCH_INC="${WKBENCH_INC//\\//}"
           export WKBENCH_LIB="${WKBENCH_LIB//\\//}"
           if command -v cygpath >/dev/null 2>&1; then
-            export PATH="$(cygpath -u "$WKBENCH_LIB"):$PATH"
+            # Assigned separately: inside `export x=$(...)` the export succeeds
+            # and cygpath's own exit status is thrown away.
+            lib_unix=$(cygpath -u "$WKBENCH_LIB")
+            export PATH="$lib_unix:$PATH"
           else
             export LD_LIBRARY_PATH="$WKBENCH_LIB:$LD_LIBRARY_PATH"
             export DYLD_LIBRARY_PATH="$WKBENCH_LIB:$DYLD_LIBRARY_PATH"
@@ -429,6 +474,7 @@ jobs:
   dataset-manifest:
     name: Dataset manifest
     runs-on: ubuntu-latest
+    timeout-minutes: 15 # backstop against a hung job, not a budget
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -440,7 +486,7 @@ jobs:
       # edit must break the build before it can silently change a case's hash.
       - name: Verify dataset blake3 digests against the manifest
         run: |
-          pip install blake3
+          python -m pip install --require-hashes -r .github/requirements/manifest.txt
           bash .github/scripts/check-manifest.sh
       # A case is committed in four places (cases/, cases/suite.json, the golden
       # mirror, the runnable copy under examples/data/). Blessing writes all four
