@@ -460,7 +460,10 @@ jobs:
           export WKBENCH_INC="${WKBENCH_INC//\\//}"
           export WKBENCH_LIB="${WKBENCH_LIB//\\//}"
           if command -v cygpath >/dev/null 2>&1; then
-            export PATH="$(cygpath -u "$WKBENCH_LIB"):$PATH"
+            # Assigned separately: inside `export x=$(...)` the export succeeds
+            # and cygpath's own exit status is thrown away.
+            lib_unix=$(cygpath -u "$WKBENCH_LIB")
+            export PATH="$lib_unix:$PATH"
           else
             export LD_LIBRARY_PATH="$WKBENCH_LIB:$LD_LIBRARY_PATH"
             export DYLD_LIBRARY_PATH="$WKBENCH_LIB:$DYLD_LIBRARY_PATH"
