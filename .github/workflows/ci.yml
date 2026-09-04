@@ -94,18 +94,188 @@ jobs:
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
       - run: cargo build -p wickra-benchmark-node
 
-  supply-chain:
-    name: cargo-deny
+  binding-surface:
+    name: Binding surface parity
     runs-on: ubuntu-latest
-    timeout-minutes: 20 # backstop against a hung job, not a budget
+    timeout-minutes: 10 # a static check; if it is not done in ten minutes it is stuck
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Ten language reaches sit on one C ABI, and each is tested separately.
+      # The golden corpus compares responses, so a binding that never grew a
+      # method has no test to fail. This holds every language to the header.
+      - name: Compare every binding's surface with the C ABI
+        run: python3 scripts/check_binding_surface.py
+
+      # The version lives in twenty-odd declarations across six package
+      # managers. A bump that misses one ships a package pinning a binary that
+      # was never published, and that surfaces on a user's machine after the tag.
+      - name: Every version declaration agrees
+        run: python3 scripts/check_version_sync.py
+
+      # The binding READMEs are the long descriptions PyPI, NuGet, pkg.go.dev
+      # and r-universe render. A repository-relative link resolves on GitHub and
+      # is dead on all four, and nothing else notices — the file it points at
+      # does exist here.
+      - name: Binding READMEs link absolutely
+        run: python3 scripts/check_readme_links.py
+
+      # Cargo decides what to package from git, so the licence texts cannot be
+      # staged at publish time the way the npm ones are: untracked makes
+      # `cargo publish` refuse the dirty tree, gitignored drops them from the
+      # .crate. Committed copies are the only thing that works, so their drift
+      # is what needs watching.
+      - name: Published packages carry their licence texts
+        run: python3 scripts/check_license_copies.py
+
+      # A case is committed in four places. Blessing writes all four from one
+      # value; this catches the copy a re-bless forgot.
+      - name: The corpus copies agree
+        run: python3 scripts/check_corpus_sync.py
+
+  # An early heads-up on a broken link in a pull request. Deliberately
+  # non-blocking: external link rot is non-deterministic, and a third-party site
+  # rate-limiting must never fail someone's PR. The authoritative run is the
+  # weekly schedule in links.yml.
+  links:
+    name: External links (non-blocking)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 10 # backstop against a hung job, not a budget
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: --config lychee.toml --no-progress --root-dir "${{ github.workspace }}" "*.md" "docs/*.md" "bindings/*/README.md"
+          fail: true
+
+  # Both crates here are published, so the version number is a promise to a
+  # consumer. A pub type or method quietly removed still compiles in this
+  # workspace — nothing in it depends on the published shape — and breaks only at
+  # the other end, after a tag nobody can take back. cargo-semver-checks compares
+  # the current source against the last release on crates.io and says which bump
+  # the change actually requires.
+  semver:
+    name: Semver compatibility
+    runs-on: ubuntu-latest
+    timeout-minutes: 30 # backstop against a hung job, not a budget
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-rust
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        continue-on-error: true # cache is an optimisation; never block on a stuck/slow restore
+        timeout-minutes: 6
+      - uses: taiki-e/install-action@742a3317eac7bd62f91cd888b4eead5e784ba833 # v2.87.1
+        with:
+          tool: cargo-semver-checks
+      # Nothing has been published yet, so there is no baseline to compare
+      # against and check-release has nothing to say. It reports that and exits
+      # zero; from the first release onwards this becomes a real check without
+      # anyone having to remember to enable it.
+      # The bench crate carries publish = false and is excluded for good.
+      - name: Check the public API against the last release
+        run: |
+          cargo semver-checks check-release \
+            -p benchmark-core \
+            -p benchmark-cli
+
+  # The Linux wheels — manylinux and musllinux — are built by release.yml and
+  # nowhere else, so the container path is first exercised at the tag, the one
+  # moment where a failure is expensive and irreversible. The regular python job
+  # builds against the runner's own glibc and cannot see a container problem at
+  # all.
+  #
+  # The failure this catches elsewhere in the family is a native dependency the
+  # container lacks (vendored OpenSSL, perl-core). That one cannot happen here:
+  # the binding depends only on benchmark-core, and openssl-sys and native-tls
+  # appear nowhere in Cargo.lock. What remains is worth proving anyway — that the
+  # wheel builds in both containers and that the module it produces actually
+  # imports under musl, which is a different libc, not a different flag.
+  python-wheel-container-smoke:
+    name: Linux wheel in ${{ matrix.manylinux }}
+    strategy:
+      fail-fast: false
+      matrix:
+        manylinux: [auto, musllinux_1_2]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45 # backstop against a hung job; builds the release profile inside a container
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+      # maturin reads bindings/python/README.md for the wheel metadata; the
+      # release job stages it the same way.
+      - name: Sync root README into bindings/python
+        run: cp README.md bindings/python/README.md
+      - uses: PyO3/maturin-action@e83996d129638aa358a18fbd1dfb82f0b0fb5d3b # v1.51.0
+        with:
+          working-directory: bindings/python
+          target: x86_64
+          args: --release --strip --out dist
+          manylinux: ${{ matrix.manylinux }}
+
+      # Building is half the claim. The wheel has to import, and for musllinux
+      # that can only be shown under musl — ubuntu-latest is glibc, so a plain
+      # pip install there would silently prove nothing about the artefact the
+      # release publishes.
+      - name: Import the wheel under glibc
+        if: matrix.manylinux == 'auto'
+        run: |
+          python -m pip install --no-index --find-links bindings/python/dist wickra-benchmark
+          python -c "import wickra_benchmark as wb; print(wb.__name__, 'imported')"
+
+      - name: Import the wheel under musl
+        if: matrix.manylinux == 'musllinux_1_2'
+        run: |
+          docker run --rm -v "$PWD/bindings/python/dist:/dist:ro" python:3.11-alpine \
+            sh -c "pip install --no-index --find-links /dist wickra-benchmark \
+                   && python -c \"import wickra_benchmark as wb; print(wb.__name__, 'imported')\""
+
+  supply-chain:
+    name: cargo-deny + osv-scanner
+    runs-on: ubuntu-latest
+    timeout-minutes: 30 # backstop against a hung job, not a budget
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - uses: taiki-e/install-action@3d7d7cd5ac7f994c1892ae0c06165095b9139094 # v2.85.1
         with:
-          tool: cargo-deny
+          tool: cargo-deny,osv-scanner
       - run: cargo deny check
+
+      # cargo-deny only sees the Rust dependency graph. osv-scanner reads every
+      # lockfile in the tree -- npm, pip, maven, nuget, go -- which is where the
+      # other nine language surfaces get their dependencies, and none of them
+      # were covered. It also reads osv-scanner.toml, so an advisory assessed
+      # there is suppressed here rather than reported twice; until now that file
+      # was committed configuration nothing ever loaded.
+      #
+      # --no-resolve turns off transitive resolution of *manifests*. The default
+      # enricher resolves pom.xml against Maven Central, and ours depends on
+      # org.wickra:wickra-benchmark at the version in the tree -- which does not
+      # exist there until the release publishes it. Without this, every version
+      # bump would fail this job on a lookup for the artefact the bump itself
+      # creates, with the scan reporting zero vulnerabilities right above the
+      # error. A check that goes red for a reason other than what it checks
+      # teaches people to ignore it.
+      #
+      # The cost is real and worth naming: Maven and NuGet manifests are scanned
+      # for their direct dependencies only. Everything pinned in a lockfile --
+      # Cargo.lock, package-lock.json, go.sum, the hash-locked requirements --
+      # is still scanned in full, transitively, because a lockfile needs no
+      # resolution; and cargo deny above covers the Rust graph.
+      - name: Scan every lockfile for known vulnerabilities
+        run: osv-scanner scan source -r --no-resolve --config=osv-scanner.toml .
 
   coverage:
     name: Coverage
