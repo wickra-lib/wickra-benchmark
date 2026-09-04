@@ -10,9 +10,13 @@ cargo-fuzz = true
 [dependencies]
 libfuzzer-sys = "0.4"
 serde_json = "1"
-# The core under test, plus the engine used to synthesize blessed cases.
+# The core under test, plus the engine used to synthesize blessed cases. This
+# crate detaches from the parent workspace (see below), so it resolves the engine
+# on its own — it must name the same source as the workspace does, or the graph
+# ends up with two `wickra-backtest-core` crates whose types do not interoperate
+# and the targets stop compiling.
 benchmark-core = { path = "../crates/benchmark-core" }
-wickra-backtest-core = { git = "https://github.com/wickra-lib/wickra-backtest", version = "0.1" }
+wickra-backtest-core = "0.1.4"
 
 # Detach from the parent workspace — cargo-fuzz builds this crate on its own with
 # sanitizer flags on a nightly toolchain.

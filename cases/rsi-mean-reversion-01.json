@@ -2,15 +2,12 @@
   "id": "rsi-mean-reversion-01",
   "description": "RSI(14) mean reversion: buy oversold (<30), sell (>50), on an oscillating range.",
   "strategy": {
-    "symbol": "BTCUSDT",
-    "timeframe": "1h",
-    "indicators": {
-      "rsi": {
-        "type": "Rsi",
-        "params": [
-          14
-        ]
-      }
+    "costs": {
+      "slippage": {
+        "bps": 2,
+        "type": "fixed_bps"
+      },
+      "taker_bps": 5
     },
     "entry": {
       "lt": [
@@ -24,17 +21,20 @@
         50
       ]
     },
-    "sizing": {
-      "type": "fixed_fraction",
-      "fraction": 0.5
-    },
-    "costs": {
-      "taker_bps": 5,
-      "slippage": {
-        "type": "fixed_bps",
-        "bps": 2
+    "indicators": {
+      "rsi": {
+        "params": [
+          14
+        ],
+        "type": "Rsi"
       }
-    }
+    },
+    "sizing": {
+      "fraction": 0.5,
+      "type": "fixed_fraction"
+    },
+    "symbol": "BTCUSDT",
+    "timeframe": "1h"
   },
   "dataset_ref": "mean-revert-range.csv",
   "expected": {
@@ -374,6 +374,8 @@
       "win_rate": 100.0
     },
     "schema_version": 1,
+    "symbol": "BTCUSDT",
+    "timeframe": "1h",
     "trades": [
       {
         "entry_price": 85.7431140854356,
@@ -397,5 +399,5 @@
       }
     ]
   },
-  "expected_hash": "13102d9bc5986a757408682fcd04ad9406c912dee1d4a3ea9db70ab636cb0072"
+  "expected_hash": "664558550a58bddf2045f4493bfcb94ee1e85060c3821c5db1927a8350a23fe2"
 }
