@@ -66,8 +66,10 @@ blake3 = "1"
 clap = { version = "4", features = ["derive"] }
 # C ABI header generation.
 cbindgen = "0.27"
-# Test/dev.
-criterion = "0.8"
+# Test/dev. criterion is not listed here: the bench crate aliases it to
+# codspeed-criterion-compat so the instrumented runner can measure it, and a
+# workspace entry would only invite that alias to be replaced by a plain
+# `criterion.workspace = true` again.
 proptest = "1"
 
 [workspace.lints.rust]

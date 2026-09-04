@@ -1,0 +1,12 @@
+# Python 3.9 dev/test tooling for the ci.yml python job. Locked separately
+# because a resolution for 3.9 is not the same as one for 3.13, and the wheels
+# have to exist for the interpreter that installs them.
+# Locked output: ci-dev-py39.txt. Refresh via scripts/update-lockfiles.sh.
+#
+# No pytest here, deliberately. pytest 9.x requires Python 3.10, so this row
+# could only ever pin 8.x -- below the fix for GHSA-6w46-j5rx-g56g, with no
+# backport. Keeping a vulnerable package pinned would be the wrong trade, and
+# here it buys nothing at all: not one test module in bindings/python/tests
+# imports pytest. They are plain functions with plain asserts, so the 3.9 row
+# runs the whole suite through run_without_pytest.py instead.
+maturin
