@@ -442,3 +442,9 @@ jobs:
         run: |
           pip install blake3
           bash .github/scripts/check-manifest.sh
+      # A case is committed in four places (cases/, cases/suite.json, the golden
+      # mirror, the runnable copy under examples/data/). Blessing writes all four
+      # from one value; this catches the copy a re-bless forgot, which once left
+      # examples/data/ stale and only the C example noticed.
+      - name: Verify the corpus copies agree
+        run: python scripts/check_corpus_sync.py

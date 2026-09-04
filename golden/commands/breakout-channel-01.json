@@ -4,15 +4,12 @@
     "id": "breakout-channel-01",
     "description": "Donchian(20) channel breakout: enter on a new high, exit on a new low.",
     "strategy": {
-      "symbol": "BTCUSDT",
-      "timeframe": "1d",
-      "indicators": {
-        "dc": {
-          "type": "Donchian",
-          "params": [
-            20
-          ]
-        }
+      "costs": {
+        "slippage": {
+          "bps": 2,
+          "type": "fixed_bps"
+        },
+        "taker_bps": 5
       },
       "entry": {
         "ge": [
@@ -30,17 +27,20 @@
           "dc.lower"
         ]
       },
-      "sizing": {
-        "type": "fixed_fraction",
-        "fraction": 0.95
-      },
-      "costs": {
-        "taker_bps": 5,
-        "slippage": {
-          "type": "fixed_bps",
-          "bps": 2
+      "indicators": {
+        "dc": {
+          "params": [
+            20
+          ],
+          "type": "Donchian"
         }
-      }
+      },
+      "sizing": {
+        "fraction": 0.95,
+        "type": "fixed_fraction"
+      },
+      "symbol": "BTCUSDT",
+      "timeframe": "1d"
     },
     "dataset_ref": "breakout.csv",
     "expected": {
@@ -380,6 +380,8 @@
         "win_rate": 16.666666666666664
       },
       "schema_version": 1,
+      "symbol": "BTCUSDT",
+      "timeframe": "1d",
       "trades": [
         {
           "entry_price": 100.02,
@@ -503,7 +505,7 @@
         }
       ]
     },
-    "expected_hash": "7993bd2067c298f18a69182c1d9e193fb92e439c1ed5802f08f26393ee3112c3"
+    "expected_hash": "2b1ef11f989c32683bdf38374a547eea9504f0ee720f44c6c15cbff9f4eef45e"
   },
   "data": [
     {

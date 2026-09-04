@@ -4,21 +4,12 @@
     "id": "ema-trend-follow-01",
     "description": "EMA(5/15) trend following on a noisy uptrend.",
     "strategy": {
-      "symbol": "BTCUSDT",
-      "timeframe": "1h",
-      "indicators": {
-        "ema_fast": {
-          "type": "Ema",
-          "params": [
-            5
-          ]
+      "costs": {
+        "slippage": {
+          "bps": 2,
+          "type": "fixed_bps"
         },
-        "ema_slow": {
-          "type": "Ema",
-          "params": [
-            15
-          ]
-        }
+        "taker_bps": 5
       },
       "entry": {
         "cross_above": [
@@ -32,17 +23,26 @@
           "ema_slow"
         ]
       },
-      "sizing": {
-        "type": "fixed_fraction",
-        "fraction": 0.95
-      },
-      "costs": {
-        "taker_bps": 5,
-        "slippage": {
-          "type": "fixed_bps",
-          "bps": 2
+      "indicators": {
+        "ema_fast": {
+          "params": [
+            5
+          ],
+          "type": "Ema"
+        },
+        "ema_slow": {
+          "params": [
+            15
+          ],
+          "type": "Ema"
         }
-      }
+      },
+      "sizing": {
+        "fraction": 0.95,
+        "type": "fixed_fraction"
+      },
+      "symbol": "BTCUSDT",
+      "timeframe": "1h"
     },
     "dataset_ref": "ema-trend.csv",
     "expected": {
@@ -382,6 +382,8 @@
         "win_rate": 40.0
       },
       "schema_version": 1,
+      "symbol": "BTCUSDT",
+      "timeframe": "1h",
       "trades": [
         {
           "entry_price": 106.12333563583495,
@@ -435,7 +437,7 @@
         }
       ]
     },
-    "expected_hash": "aed9687bc6024a10b4939aa895ebc4ff9023535dc681decb9e53ce502e58263d"
+    "expected_hash": "97a97c31a40051dd64145cd5bb5dbb218a857c41789bc8d0bf2a4fb1c44efd75"
   },
   "data": [
     {
