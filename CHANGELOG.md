@@ -12,6 +12,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   instead of git. A git dependency makes the whole workspace unpublishable, and
   the engine has been on crates.io since 0.1.2. The bump re-shapes every report
   (`symbol` and `timeframe` are new fields), so the corpus is re-blessed with it.
+  `fuzz/` detaches from the workspace and resolves the engine on its own, so it
+  names the same source — otherwise the graph carries two `wickra-backtest-core`
+  crates whose types do not interoperate and the targets stop compiling.
 - Blessing is one step and writes every copy of the corpus from the same value:
   `WICKRA_BLESS=1 cargo test -p benchmark-core --test golden`. Objects land with
   their keys sorted, so an authored `strategy` is normalised on the way in.
