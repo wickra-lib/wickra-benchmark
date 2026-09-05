@@ -57,13 +57,23 @@ wickra-benchmark run-suite --suite cases/suite.json --data-root datasets
 ```
 
 ```text
-id                     passed  hash_match  hash
-breakout-channel-01    true    true        2b1ef11f989c
-buy-and-hold-01        true    true        c1f6820a3de2
-ema-trend-follow-01    true    true        97a97c31a400
-rsi-mean-reversion-01  true    true        664558550a58
-sma-crossover-01       true    true        8f5e84ff8862
-5/5 passed
+id                      passed  hash_match  hash
+atr-breakout-filter-01  true    true        9d79e79f8323
+bollinger-breakout-01   true    true        5d25f870f8a9
+breakout-channel-01     true    true        2b1ef11f989c
+buy-and-hold-01         true    true        c1f6820a3de2
+donchian-long-range-01  true    true        66c89cd7e025
+ema-trend-follow-01     true    true        97a97c31a400
+ema-whipsaw-01          true    true        67f1c7ffed09
+macd-trend-01           true    true        21ed980a9c53
+roc-momentum-01         true    true        ccc3cb4f26ca
+rsi-mean-reversion-01   true    true        664558550a58
+rsi-short-downtrend-01  true    true        863447c37345
+sma-crossover-01        true    true        8f5e84ff8862
+sma-long-trend-01       true    true        ff7647521e22
+sma-timed-exit-01       true    true        f3c209e5debc
+wma-crossover-01        true    true        365525935325
+15/15 passed
 ```
 
 Exit code `0` means every case reproduced, `1` that at least one did not — so a
@@ -243,10 +253,11 @@ The commands are in
 
 - `benchmark-core` — 14 unit tests over case and suite validation, the CSV candle
   loader, canonicalization and hashing. Plus five integration suites: 12
-  conformance tests (determinism, ordering, the pass/fail tally), 6
+  conformance tests (determinism, ordering, the pass/fail tally), 11
   indicator-conformance tests (every frozen `expected_hash` is downstream of the
   indicator arithmetic, so a moved hash has two possible causes; these separate
-  them), 4 property tests, the path-vs-inline equivalence test (`run_suite` and
+  them — one per family the cases name, plus the guard that fails when a case
+  names a family nothing pins), 4 property tests, the path-vs-inline equivalence test (`run_suite` and
   `run_suite_inline` must agree on the same data), and the golden runner.
 - `benchmark-cli` — 4 tests over argument parsing.
 - `bindings/c` — 6 Rust tests driving the ABI itself, including its error paths,
@@ -261,7 +272,7 @@ The commands are in
   suite parser, `run_case`, and the `command_json` envelope.
 
 On top of those, **all ten languages** replay the shared, language-neutral golden
-corpus in [`golden/`](golden/) — eight command envelopes — and assert their
+corpus in [`golden/`](golden/) — eighteen command envelopes — and assert their
 response is byte-identical to the committed one.
 
 > **What "parity" means here, precisely.** The responses are compared **byte for

@@ -1,7 +1,12 @@
 {
   "breakout.csv": "f4d90936b68cd50e9255b733e3143e69c420bb6c3b3192ce4846973fe53d1a8b",
+  "choppy.csv": "b47bf884de449a70dc8b5e86ab8df6bcf24ac79eab24c62e2d8cc2c3c3cc9a3d",
+  "downtrend.csv": "100bbaea93754d1e54f026ea2c649de4ef369512b2e75d0d7a1790afebbcbb42",
   "ema-trend.csv": "9be3b914b6924aa2b77546139549f2dd62226ac642fbd9c76b15a41ed4863fde",
   "flat.csv": "d8bee4f0fdd8af70e445a60901f5904da6110a030db7640f777fdfe7d4b8bfc2",
+  "long-range.csv": "3256f7d5d4656796f60393fdd4db01facf87a90231d64946c621268d6df03d7f",
+  "long-trend.csv": "5644f2f9db7ecd6035fb76e97df7e1a361dd0c848c5f18b1bde82f1fc10cabc5",
   "mean-revert-range.csv": "9ab3f24ddf099eea1f91807484960997f26f231441a96ea01c420582c7433d31",
-  "sma-uptrend.csv": "d76d855bd32b1b2910dc61288d9930946decc534a371893c26bda53a2ed1e5d3"
+  "sma-uptrend.csv": "d76d855bd32b1b2910dc61288d9930946decc534a371893c26bda53a2ed1e5d3",
+  "volatility-shock.csv": "aa673412adab2d6fde6c6bd50d4b4e30164a8c1d1a8e6d6f3aa030fda700c61b"
 }

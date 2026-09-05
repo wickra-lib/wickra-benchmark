@@ -22,11 +22,12 @@ same structure, the same tests / fuzz / golden / examples / bindings / CI.
 
 ## Before the first release
 
-- [ ] Grow the case registry. It currently holds **five** cases over five
-      deterministic datasets of 60-80 bars each. That is enough to prove the
-      machinery reproduces and not enough to call a benchmark suite: no regime
-      variety, no long series, no strategy family beyond crossovers and a
-      breakout.
+- [x] Grow the case registry. It holds **fifteen** cases over ten deterministic
+      datasets: a downtrend, a volatility shock and a trendless chop alongside
+      the original five, two long series of 600 and 750 bars, and families
+      beyond crossovers and a breakout — MACD, Bollinger bands, ATR, rate of
+      change and a weighted average, plus the short side, a time-based exit and
+      a two-condition `all`.
 - [x] A `wickra-benchmark-site` repository, at
       [wickra-benchmark-site](https://github.com/wickra-lib/wickra-benchmark-site).
 - [ ] Point `benchmark.wickra.org` at it: the DNS record and the Cloudflare Pages

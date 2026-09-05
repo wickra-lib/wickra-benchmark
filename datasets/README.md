@@ -45,6 +45,11 @@ low(i)   = min(open, close) - w
 | `ema-trend.csv`         | 80   | 1.0  | `100 + 0.4*i + 6*sin(0.55*i)`               | Steady trend with fast ripple — EMA fast/slow crossovers. |
 | `breakout.csv`          | 80   | 0.5  | `100.0` for `i < 40`, else `100.0 + 2.0*(i-40)` | Flat base then a clean breakout — Donchian channel break. |
 | `flat.csv`              | 60   | 0.2  | `100 + 0.02*i`                              | Near-flat drift — a trivially-always-in-market buy-and-hold. |
+| `downtrend.csv`         | 80   | 1.0  | `140 - 0.35*i + 7*sin(0.45*i)`              | A falling trend with rallies inside it — the adverse regime. |
+| `volatility-shock.csv`  | 80   | 0.5  | `100 + 0.05*i` for `i < 40`, else that `+ 12*sin(1.10*(i-40))` | Quiet drift, then the same drift under a large oscillation. |
+| `choppy.csv`            | 80   | 0.4  | `100 + 4*sin(0.90*i) + 2*sin(0.31*i)`       | No trend at all: two fast cycles beating against each other. |
+| `long-trend.csv`        | 600  | 1.0  | `100 + 0.08*i + 10*sin(0.05*i) + 4*sin(0.17*i)` | A long climb with two cycles on it — warmup is a small part of the run. |
+| `long-range.csv`        | 750  | 1.0  | `120 + 18*sin(0.035*i) + 5*sin(0.11*i)`     | A long oscillation around one level, with a faster ripple. |
 
 `sin` is the standard double-precision sine in radians. All arithmetic is IEEE-754
 `f64`; the CSV writes each value with the shortest round-trip decimal (Python's

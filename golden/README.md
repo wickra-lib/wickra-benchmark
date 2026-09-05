@@ -25,14 +25,24 @@ the cross-language equality check — same sorted keys, same quantized floats, s
 
 | `<name>`                | Command      | What it exercises |
 |-------------------------|--------------|-------------------|
-| `sma-crossover-01`      | `run_case`   | SMA(10/30) crossover — recompute + hash match. |
-| `rsi-mean-reversion-01` | `run_case`   | RSI(14) mean reversion. |
-| `ema-trend-follow-01`   | `run_case`   | EMA(5/15) trend following. |
-| `breakout-channel-01`   | `run_case`   | Donchian(20) channel breakout. |
-| `buy-and-hold-01`       | `run_case`   | Always-in-market baseline. |
-| `suite-run`             | `run_suite`  | All five cases over their datasets in one report. |
-| `suite-list`            | `list_cases` | The sorted case ids of the suite. |
-| `version`               | `version`    | The benchmark and engine versions. |
+| `sma-crossover-01`       | `run_case`   | SMA(10/30) crossover — recompute + hash match. |
+| `rsi-mean-reversion-01`  | `run_case`   | RSI(14) mean reversion. |
+| `ema-trend-follow-01`    | `run_case`   | EMA(5/15) trend following. |
+| `breakout-channel-01`    | `run_case`   | Donchian(20) channel breakout. |
+| `buy-and-hold-01`        | `run_case`   | Always-in-market baseline. |
+| `macd-trend-01`          | `run_case`   | MACD(12/26/9) line over signal, 600 bars. |
+| `bollinger-breakout-01`  | `run_case`   | Close above the upper band, out at the middle, 750 bars. |
+| `atr-breakout-filter-01` | `run_case`   | A Donchian break gated on ATR — an `all` of two conditions. |
+| `roc-momentum-01`        | `run_case`   | ROC(14) above zero and `rising`. |
+| `wma-crossover-01`       | `run_case`   | WMA(10/30) crossover against a falling market. |
+| `ema-whipsaw-01`         | `run_case`   | EMA(5/20) crossover with no trend to catch. |
+| `rsi-short-downtrend-01` | `run_case`   | RSI with `short_entry`/`short_exit` — the short side. |
+| `donchian-long-range-01` | `run_case`   | Donchian(40) over 750 bars of oscillation. |
+| `sma-timed-exit-01`      | `run_case`   | An entry released by `bars_since_entry`, not by a signal. |
+| `sma-long-trend-01`      | `run_case`   | SMA(20/60) over 600 bars, where warmup is a small part. |
+| `suite-run`              | `run_suite`  | All fifteen cases over their datasets in one report. |
+| `suite-list`             | `list_cases` | The sorted case ids of the suite. |
+| `version`                | `version`    | The benchmark and engine versions. |
 
 Every `run_case`/`run_suite` fixture is *blessed*: its `expected`/`expected_hash`
 come from the engine itself, so each response has `passed: true` and, for

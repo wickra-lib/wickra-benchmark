@@ -298,9 +298,9 @@ fn golden_commands_are_byte_identical() {
     }
 
     assert!(
-        count >= 8,
-        "expected at least eight golden fixtures, got {count}"
+        count >= 18,
+        "expected at least eighteen golden fixtures, got {count}"
     );
-    assert_eq!(run_case_seen, 5, "expected five run_case fixtures");
+    assert_eq!(run_case_seen, 15, "expected fifteen run_case fixtures");
     assert!(suite_run_seen, "expected a run_suite fixture");
 }

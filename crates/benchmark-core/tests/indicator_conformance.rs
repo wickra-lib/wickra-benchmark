@@ -10,12 +10,12 @@
 //!   * the engine changed how it turns signals into trades, or
 //!   * an indicator changed the numbers those signals are made of.
 //!
-//! Diffing a recomputed report answers neither. This does: it drives the four
+//! Diffing a recomputed report answers neither. This does: it drives the nine
 //! indicator families the committed cases actually name, straight from
 //! `wickra-core`, against hand-checkable inputs. If it fails alongside a moved
 //! hash, the cause is the indicator core. If it passes, the cause is above it.
 //!
-//! Deliberately only those four. A test that pinned the whole catalogue would
+//! Deliberately only those nine. A test that pinned the whole catalogue would
 //! fail on indicators no case here uses, which is somebody else's regression
 //! reported in the wrong repository. The list grows when a case introduces a
 //! family, and `assert_families_are_covered` is what makes that happen: it reads
@@ -24,8 +24,11 @@
 // Every float compared here is exact by construction, not the result of
 // accumulated arithmetic: Donchian *selects* an input high or low rather than
 // computing one, and the moving averages are checked on inputs whose means are
-// exactly representable ((1+2+3)/3, and the mean of a constant). An epsilon
-// would be the weaker assertion -- it would pass on a value that drifted.
+// exactly representable ((1+2+3)/3, (1*0+2*0+3*6)/6, and the mean of a
+// constant). The rest are zeroes and integers reached the same way: a constant
+// true range averages to itself, a flat series has no rate of change and no
+// deviation, and two averages of one constant cannot differ. An epsilon would be
+// the weaker assertion -- it would pass on a value that drifted.
 #![allow(clippy::float_cmp)]
 
 use std::collections::BTreeSet;
@@ -33,11 +36,27 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use serde_json::Value;
-use wickra_core::{Candle, Donchian, Ema, Indicator, Rsi, Sma};
+use wickra_core::{
+    Atr, BollingerBands, Candle, Donchian, Ema, Indicator, MacdIndicator, Roc, Rsi, Sma, Wma,
+};
 
 /// Every family this file pins. Kept beside the tests that pin them so the two
 /// cannot drift apart silently.
-const PINNED: [&str; 4] = ["Donchian", "Ema", "Rsi", "Sma"];
+///
+/// These are the names a case writes in its `type` field, which is the spec's
+/// vocabulary rather than the crate's: `"Macd"` is the spec alias the engine
+/// resolves to `wickra_core::MacdIndicator`.
+const PINNED: [&str; 9] = [
+    "Atr",
+    "BollingerBands",
+    "Donchian",
+    "Ema",
+    "Macd",
+    "Roc",
+    "Rsi",
+    "Sma",
+    "Wma",
+];
 
 fn repo_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
@@ -159,6 +178,131 @@ fn reset_returns_an_indicator_to_its_starting_state() {
     sma.reset();
     assert!(!sma.is_ready(), "reset must undo readiness");
     assert_eq!(sma.update(1.0), None, "and the window with it");
+}
+
+#[test]
+fn wma_weights_the_newest_input_hardest() {
+    let mut wma = Wma::new(3).expect("period 3 is valid");
+    assert_eq!(wma.warmup_period(), 3);
+
+    // Weights 1, 2, 3 over inputs 0, 0, 6: (1*0 + 2*0 + 3*6) / (1 + 2 + 3) = 3.
+    // Chosen so the result is exact rather than a repeating fraction -- the
+    // whole point of this file is that the value can be checked by hand.
+    assert_eq!(wma.update(0.0), None, "no value before the window is full");
+    assert_eq!(wma.update(0.0), None);
+    assert_eq!(wma.update(6.0), Some(3.0));
+
+    // And the constant property the crossover cases lean on.
+    let mut flat = Wma::new(10).expect("period 10 is valid");
+    for _ in 0..9 {
+        flat.update(FLAT);
+    }
+    assert_eq!(
+        flat.update(FLAT),
+        Some(FLAT),
+        "a weighted mean of a constant is that constant"
+    );
+}
+
+#[test]
+fn roc_is_a_percentage_of_the_earlier_price() {
+    let mut roc = Roc::new(1).expect("period 1 is valid");
+    // period + 1: a rate of change over one bar needs two prices.
+    assert_eq!(roc.warmup_period(), 2);
+
+    assert_eq!(roc.update(100.0), None, "one price is not a change");
+    // (200 - 100) / 100 * 100 -- a doubling is +100 percent, not +1.
+    assert_eq!(roc.update(200.0), Some(100.0));
+    // And back down: (100 - 200) / 200 * 100.
+    assert_eq!(roc.update(100.0), Some(-50.0));
+
+    let mut flat = Roc::new(14).expect("period 14 is valid");
+    let mut last = None;
+    for _ in 0..20 {
+        last = flat.update(FLAT);
+    }
+    assert_eq!(
+        last,
+        Some(0.0),
+        "a series that never moves has no rate of change"
+    );
+}
+
+#[test]
+fn atr_averages_a_constant_true_range_to_itself() {
+    let mut atr = Atr::new(14).expect("period 14 is valid");
+    assert_eq!(atr.warmup_period(), 14);
+
+    // open == close == 100, high 101, low 99. The first bar has no previous
+    // close, so its true range is high - low = 2. Every later bar takes the
+    // largest of high - low (2), |high - prev close| (1) and |low - prev close|
+    // (1), which is 2 again -- so the seed mean and every smoothed value are 2.
+    let bar = Candle::new(100.0, 101.0, 99.0, 100.0, 0.0, 0).expect("high >= low");
+    let mut last = None;
+    for _ in 0..14 {
+        last = atr.update(bar);
+    }
+    assert_eq!(
+        last,
+        Some(2.0),
+        "the average of a constant range is that range"
+    );
+    assert_eq!(atr.update(bar), Some(2.0), "and smoothing does not move it");
+}
+
+#[test]
+fn bollinger_bands_collapse_onto_a_flat_series() {
+    let mut bands = BollingerBands::new(20, 2.0).expect("period 20, multiplier 2 are valid");
+    assert_eq!(bands.warmup_period(), 20);
+
+    let mut last = None;
+    for _ in 0..20 {
+        last = bands.update(FLAT);
+    }
+    let out = last.expect("ready after 20 inputs");
+    assert_eq!(out.middle, FLAT, "the middle band is the mean");
+    assert_eq!(out.stddev, 0.0, "a constant series has no deviation");
+    assert_eq!(out.upper, FLAT, "so both bands sit on the mean");
+    assert_eq!(out.lower, FLAT);
+
+    // On a series that does move, the ordering is what the breakout case reads.
+    let mut moving = BollingerBands::new(20, 2.0).expect("period 20 is valid");
+    for i in 0..60 {
+        if let Some(out) = moving.update(100.0 + (f64::from(i) * 0.3).sin() * 5.0) {
+            assert!(
+                out.lower <= out.middle && out.middle <= out.upper,
+                "bands crossed: {} {} {}",
+                out.lower,
+                out.middle,
+                out.upper
+            );
+        }
+    }
+}
+
+#[test]
+fn macd_is_zero_while_both_averages_agree() {
+    let mut macd = MacdIndicator::new(12, 26, 9).expect("12/26/9 is valid");
+    // The slow EMA needs 26 inputs to seed, and the signal EMA another 8 on top.
+    assert_eq!(macd.warmup_period(), 34);
+
+    let mut last = None;
+    for _ in 0..34 {
+        last = macd.update(FLAT);
+    }
+    let out = last.expect("ready after 34 inputs");
+    assert_eq!(out.macd, 0.0, "two averages of one constant cannot differ");
+    assert_eq!(out.signal, 0.0);
+    assert_eq!(out.histogram, 0.0, "and their difference is zero");
+
+    // A step up must lift the fast average first, which is the sign the
+    // crossover case in the corpus trades on.
+    let stepped = macd.update(200.0).expect("ready");
+    assert!(
+        stepped.macd > 0.0,
+        "the fast average must lead on a step up, got {}",
+        stepped.macd
+    );
 }
 
 #[test]
