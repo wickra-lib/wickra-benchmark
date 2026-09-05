@@ -135,6 +135,18 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- Three of the eight batch-equivalence tests were never executed. The Python
+  3.9 row runs `run_without_pytest.py`, whose module list was not extended when
+  `test_batch_equivalence` was added, so the floor interpreter covered 8 of the
+  10 tests while the step describing it said it ran the same suite. The R job
+  named `run_tests.R` and `golden.R` and left `batch_equivalence.R` beside them,
+  referenced from nowhere in the repository. The WASM job ran
+  `node --test bindings/wasm/tests/golden.test.js`, one file out of the two in
+  that directory. The R and WASM steps now take the directory rather than a list
+  of names, and the Python runner keeps its explicit list but fails when a
+  `test_*.py` beside it is missing from that list, which is the omission that
+  happened here.
+
 - The two C# projects pin `LangVersion` to `12.0`, the version that pairs with
   their `net8.0` target, instead of `latest`. `setup-dotnet` installs the 8.0 SDK
   but does not remove the newer ones the runner image ships, and MSBuild picks

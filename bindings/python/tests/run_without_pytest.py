@@ -13,6 +13,11 @@ without a framework.
 Deliberately a fixed list rather than a directory scan: a module that grows a
 pytest import should fail loudly here rather than be skipped silently, because
 skipping it on 3.9 would mean the floor interpreter quietly stops covering it.
+
+The list is checked against the directory before anything runs, because a fixed
+list has the opposite failure mode -- a new module that nobody adds to it is
+skipped just as silently. test_batch_equivalence was added and not listed, so
+the two assertions it carries never ran on the floor interpreter at all.
 """
 
 from __future__ import annotations
@@ -23,6 +28,7 @@ import traceback
 from pathlib import Path
 
 MODULES = (
+    "test_batch_equivalence",
     "test_completeness",
     "test_golden",
     "test_smoke",
@@ -30,7 +36,18 @@ MODULES = (
 
 
 def main() -> int:
-    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    here = Path(__file__).resolve().parent
+    sys.path.insert(0, str(here))
+
+    on_disk = {p.stem for p in here.glob("test_*.py")}
+    unlisted = sorted(on_disk - set(MODULES))
+    if unlisted:
+        print(
+            "not listed in MODULES, so it would never run here: "
+            + ", ".join(unlisted),
+            file=sys.stderr,
+        )
+        return 1
 
     passed = 0
     failures: list[tuple[str, str]] = []
