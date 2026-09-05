@@ -72,6 +72,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   handle and folds the size-then-write dance of `wickra_benchmark_command` into
   one call returning a `std::string`. The C++ example now uses it; `run.c` still
   drives the plain C ABI, so the pair shows both surfaces.
+- A `gate` job in `release.yml`, between building and publishing. Everything
+  above it is repeatable; everything below reaches a registry and cannot be taken
+  back. It refuses anything that is not a pushed `refs/tags/v*` — a
+  `workflow_dispatch` from `main` would previously have published — and waits for
+  `ci.yml` to be green on the tagged commit rather than reading an unfinished run
+  as a failure.
 - An npm tarball check: `files` decides what npm ships, and a name dropped from
   it is not an error — it is a package that installs and cannot load.
 - A WebAssembly example (`examples/wasm/run.cjs`). WASM was the only binding
@@ -105,6 +111,24 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- Every publish job now hangs off that gate. `cargo-publish` had no `needs` at
+  all, so it started the moment the tag landed; the rest hung only off their own
+  build, meaning a workspace that failed to build for one language still
+  published to the other five registries.
+- `bindings/java/pom.xml` had no `<scm>` and no `<developers>`, both of which
+  Maven Central validates for and rejects without. It also had no `release`
+  profile, so the `mvn -Prelease` in `release.yml` matched nothing — Maven only
+  warns about a missing profile, so the job would have stayed green while
+  deploying a bare jar: no sources, no javadoc, no signatures, no publishing
+  plugin.
+- `github-release` did not wait for `csharp-publish`, `java-publish` or
+  `go-mirror`, and the jar was never uploaded as an artifact, so it was the one
+  published artefact with no copy on the release page.
+- `go-mirror` pushed the module without building it, and copied `*_test.go` into
+  it — those search upwards for `golden/`, which exists here and not in the
+  consumer's module, so the mirror shipped tests that could not pass.
+- Provenance covered only the crates and wheels, leaving the nupkg, the jar and
+  the C ABI archives — three of five ecosystems — with none.
 - The R package could not be installed. `src/Makevars` took the C ABI from
   `WKBENCH_INC`/`WKBENCH_LIB`, described as "set by CI / the installer" — but
   there was no installer, nothing bundled the library, and `R CMD INSTALL` ended
