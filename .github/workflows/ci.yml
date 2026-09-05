@@ -43,6 +43,11 @@ jobs:
       # maturin; the C ABI cdylib by the `c-abi` job. Exclude both here.
       - run: cargo build --workspace ${{ matrix.features }} --exclude wickra-benchmark-python --exclude wickra-benchmark-c
       - run: cargo test --workspace ${{ matrix.features }} --exclude wickra-benchmark-python --exclude wickra-benchmark-c
+      # examples/rust is a workspace member, so the line above already built
+      # it. Run it on one row rather than all six.
+      - name: Run the Rust example
+        if: matrix.os == 'ubuntu-latest' && matrix.features == '--all-features'
+        run: cargo run --release -p wickra-benchmark-example
 
   lint:
     name: Format & Clippy
@@ -174,16 +179,30 @@ jobs:
       - uses: taiki-e/install-action@742a3317eac7bd62f91cd888b4eead5e784ba833 # v2.87.1
         with:
           tool: cargo-semver-checks
-      # Nothing has been published yet, so there is no baseline to compare
-      # against and check-release has nothing to say. It reports that and exits
-      # zero; from the first release onwards this becomes a real check without
-      # anyone having to remember to enable it.
+      # cargo-semver-checks needs a published baseline and exits 101 without
+      # one ("not found in registry"), so it cannot simply be pointed at an
+      # unpublished crate. Ask crates.io first and skip until the first release,
+      # rather than carrying a job that is red for a reason other than the one
+      # it checks -- that is how a check teaches people to ignore it.
       # The bench crate carries publish = false and is excluded for good.
       - name: Check the public API against the last release
+        shell: bash
         run: |
-          cargo semver-checks check-release \
-            -p benchmark-core \
-            -p benchmark-cli
+          published=""
+          for crate in benchmark-core benchmark-cli; do
+            if curl -fsSL "https://crates.io/api/v1/crates/$crate" \
+                 -H 'User-Agent: wickra-benchmark-ci' >/dev/null 2>&1; then
+              published="$published -p $crate"
+            else
+              echo "$crate is not on crates.io yet; nothing to compare against"
+            fi
+          done
+          if [ -n "$published" ]; then
+            # shellcheck disable=SC2086 # deliberate word splitting: -p flags
+            cargo semver-checks check-release $published
+          else
+            echo "no published baseline yet -- this becomes a real check at the first release"
+          fi
 
   # The Linux wheels — manylinux and musllinux — are built by release.yml and
   # nowhere else, so the container path is first exercised at the tag, the one
@@ -389,6 +408,8 @@ jobs:
           else
             pytest bindings/python/tests -q
           fi
+      - name: Run the Python example
+        run: python examples/python/run.py
 
   node:
     name: Node ${{ matrix.node-version }} on ${{ matrix.os }}
@@ -423,6 +444,8 @@ jobs:
         run: cd bindings/node && git diff --exit-code -- index.js index.d.ts
       - name: Run Node tests
         run: cd bindings/node && node --test
+      - name: Run the Node example
+        run: cd examples/node && npm install --no-audit --no-fund && node run.js
 
   wasm:
     name: WASM
@@ -451,6 +474,9 @@ jobs:
         working-directory: bindings/wasm
       - name: Assert wasm reproduces the golden fixtures
         run: node --test bindings/wasm/tests/golden.test.js
+      # Same pkg/ build this job produced, driven the way a reader would.
+      - name: Run the WASM example
+        run: node examples/wasm/run.cjs
 
   c-abi:
     name: C ABI on ${{ matrix.os }}
@@ -548,6 +574,14 @@ jobs:
           cd bindings/go
           go vet ./...
           go test ./...
+      - name: Run the Go example
+        shell: bash
+        run: |
+          export PATH="$WICKRA_GO_LIBDIR:$PATH"
+          export LD_LIBRARY_PATH="$WICKRA_GO_LIBDIR:$LD_LIBRARY_PATH"
+          export DYLD_LIBRARY_PATH="$WICKRA_GO_LIBDIR:$DYLD_LIBRARY_PATH"
+          cd examples/go
+          go run .
 
   csharp:
     name: C# on ${{ matrix.os }}
@@ -572,6 +606,14 @@ jobs:
         run: cargo build -p wickra-benchmark-c --release
       - name: Test the C# binding
         run: dotnet test bindings/csharp/WickraBenchmark.Tests/WickraBenchmark.Tests.csproj -c Release
+      - name: Run the C# example
+        run: dotnet run --project examples/csharp/Run/Run.csproj -c Release
+      # The .csproj packaging metadata is only exercised by packing: a wrong
+      # PackagePath is silent, and until now the only place that ran was the
+      # publish job, after the tag.
+      - name: Pack the NuGet package
+        if: runner.os == 'Linux'
+        run: dotnet pack bindings/csharp/WickraBenchmark/WickraBenchmark.csproj -c Release -o nupkg
 
   java:
     name: Java on ${{ matrix.os }}
@@ -597,6 +639,14 @@ jobs:
           cache: maven
       - name: Test the Java binding
         run: mvn -B -f bindings/java test
+      - name: Run the Java example
+        shell: bash
+        run: |
+          mvn -B -f bindings/java -q package -DskipTests
+          javac -cp bindings/java/target/classes examples/java/Run.java -d examples/java/out
+          java --enable-native-access=ALL-UNNAMED \
+               -Dnative.lib.dir=target/debug \
+               -cp "bindings/java/target/classes${{ runner.os == 'Windows' && ';' || ':' }}examples/java/out" Run
 
   r:
     name: R on ${{ matrix.os }}
@@ -640,6 +690,7 @@ jobs:
           fi
           R CMD INSTALL bindings/r
           Rscript bindings/r/tests/run_tests.R
+          Rscript examples/r/run.R
 
   dataset-manifest:
     name: Dataset manifest

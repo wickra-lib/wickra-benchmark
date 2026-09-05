@@ -13,15 +13,20 @@ in every language.
 | Rust | [`rust/`](rust/) | `cargo run -p wickra-benchmark-example` |
 | Python | [`python/run.py`](python/run.py) | `pip install wickra-benchmark && python examples/python/run.py` |
 | Node.js | [`node/`](node/) | `cd examples/node && npm install && node run.js` |
+| WebAssembly | [`wasm/run.cjs`](wasm/run.cjs) | `wasm-pack build bindings/wasm --target nodejs && node examples/wasm/run.cjs` |
 | C / C++ | [`c/`](c/) | see below |
 | Go | [`go/`](go/) | `cd examples/go && go run .` |
 | C# | [`csharp/Run/`](csharp/Run/) | `dotnet run --project examples/csharp/Run` |
 | Java | [`java/Run.java`](java/Run.java) | see the header comment |
 | R | [`r/run.R`](r/run.R) | `Rscript examples/r/run.R` |
 
-The native bindings (Python, Node.js) load their own compiled library. The
-bindings that go through the C ABI (Go, C#, Java, R, and the C/C++ example
-itself) need the C ABI library built first:
+Every one of them is executed by CI, in the language job that already has the
+toolchain — building an example is not the same as running it, and only a run
+proves the case still reproduces through that surface.
+
+The native bindings (Python, Node.js, WebAssembly) load their own compiled
+library. The bindings that go through the C ABI (Go, C#, Java, R, and the C/C++
+example itself) need the C ABI library built first:
 
 ```bash
 cargo build --release -p wickra-benchmark-c

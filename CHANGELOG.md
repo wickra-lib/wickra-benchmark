@@ -96,6 +96,15 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `--require-hashes`. No module in `bindings/python/tests` imports pytest, so
   the 3.9 row runs the same eight tests through `run_without_pytest.py` rather
   than pinning a pytest 8.x below the fix for GHSA-6w46-j5rx-g56g.
+- `js-yaml` 4.3.0 (GHSA-5p4m-2wfm-xmqj, CVSS 7.5), a transitive dev dependency
+  of `@napi-rs/cli` in the Node binding's lockfile. Found by osv-scanner on the
+  first run after it was wired in — `cargo deny` cannot see an npm lockfile at
+  all, which is the gap that wiring closed.
+- `deny.toml` allowed crate sources from the `wickra-lib` GitHub org, explaining
+  it as "the exchange facade is consumed as a git dependency". That is
+  `wickra-exchange`'s rationale, and since the engine moved to crates.io there is
+  no git source left at all — cargo-deny reported "no crate source fell under
+  this organization".
 - `osv-scanner.toml` was committed configuration that no workflow ever loaded.
   `cargo deny` only sees the Rust graph; osv-scanner reads every other lockfile
   in the tree — npm, pip, maven, nuget, go — which is where the other nine
