@@ -143,6 +143,17 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- The blessing recipe, in all three places that carry it (`cases/README.md`,
+  `docs/CASES.md`, `docs/Cookbook.md`), produced a case with a null strategy. It
+  piped `run-case --format json` into a jq filter that reads `description`,
+  `strategy` and `dataset_ref` from the response — which returns only `id`,
+  `passed`, `hash_match`, `hash` and `recomputed`, so all three came out `null`
+  and the case it wrote could not be loaded. The filter now reads the draft it
+  was given as a second input and overwrites just the two values the engine
+  produced, which also keeps the draft's field order. Checked by blessing a draft
+  of `sma-crossover-01` and comparing: identical keys, identical content,
+  identical hash.
+
 - The README's `Testing` counts match the sources again. Adding a test does not
   touch the README and nothing compared the two, so eight of the sixteen stated
   numbers had gone stale: the batch-equivalence tests raised Python to 10, Node
