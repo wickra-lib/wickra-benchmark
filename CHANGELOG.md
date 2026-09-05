@@ -135,6 +135,16 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- The two C# projects pin `LangVersion` to `12.0`, the version that pairs with
+  their `net8.0` target, instead of `latest`. `setup-dotnet` installs the 8.0 SDK
+  but does not remove the newer ones the runner image ships, and MSBuild picks
+  the highest, so `latest` meant the language version tracked the image. When
+  C# 14 reached it, its span-based overload resolution bound `Order.Reverse()` in
+  `BatchEquivalenceTests` to `MemoryExtensions.Reverse`, which sorts in place and
+  returns `void` — the C# job went red on all three operating systems, and the
+  CodeQL C# analysis with it, on a commit that touched no C#. The call now names
+  `Enumerable.Reverse`, so it reads the same under any language version.
+
 - Every publish job now hangs off that gate. `cargo-publish` had no `needs` at
   all, so it started the moment the tag landed; the rest hung only off their own
   build, meaning a workspace that failed to build for one language still

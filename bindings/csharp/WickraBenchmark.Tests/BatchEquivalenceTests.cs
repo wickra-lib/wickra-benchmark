@@ -116,7 +116,12 @@ public class BatchEquivalenceTests
     {
         using var bench = new Benchmark();
         var forwards = RunSuite(bench, Order.Select(Case));
-        var backwards = RunSuite(bench, Order.Reverse().Select(Case));
+        // Enumerable.Reverse by name, not Order.Reverse(): on an array the
+        // unqualified call is ambiguous across language versions. C# 14 made the
+        // span-based overloads win overload resolution, so MemoryExtensions.Reverse
+        // takes it -- an in-place sort that returns void, which is neither what this
+        // reads as nor something that compiles here.
+        var backwards = RunSuite(bench, Enumerable.Reverse(Order).Select(Case));
         Assert.Equal(forwards, backwards);
     }
 }

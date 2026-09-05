@@ -2,7 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
+    <!--
+      Pinned, not "latest": setup-dotnet installs the 8.0 SDK but does not remove
+      the newer ones the runner image ships, and MSBuild picks the highest. With
+      "latest" the language version therefore floats with the image. C# 14 arrived
+      that way and broke the build on a commit that changed no C# at all. 12.0 is
+      the version that pairs with net8.0.
+    -->
+    <LangVersion>12.0</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
