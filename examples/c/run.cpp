@@ -6,15 +6,20 @@
 // No JSON parser is needed: the case JSON is read verbatim and embedded as the
 // `case` value, the CSV is turned into a candle array by hand, and the response
 // is inspected with a substring search. DATA_DIR is injected by CMake.
+//
+// This one uses the optional C++ header rather than the C one, which is the
+// difference between the two examples: `wickra::benchmark::Benchmark` releases
+// the handle at scope exit and folds the size-then-write dance of
+// `wickra_benchmark_command` into a call returning a std::string. run.c does the
+// same work against the plain C ABI, so the pair shows both surfaces.
 #include <cstddef>
 #include <cstdio>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <vector>
 
-#include "wickra_benchmark.h"
+#include "wickra_benchmark.hpp"
 
 namespace {
 
@@ -48,17 +53,6 @@ std::string candlesJson(const std::string &csvPath) {
     return out + "]";
 }
 
-std::string run(WickraBenchmark *b, const std::string &cmd) {
-    int len = wickra_benchmark_command(b, cmd.c_str(), nullptr, 0);
-    if (len < 0) {
-        std::cerr << "command failed: code " << len << "\n";
-        return {};
-    }
-    std::vector<char> buf(static_cast<std::size_t>(len) + 1);
-    wickra_benchmark_command(b, cmd.c_str(), buf.data(), buf.size());
-    return std::string(buf.data());
-}
-
 }  // namespace
 
 int main() {
@@ -71,16 +65,20 @@ int main() {
     const std::string cmd =
         R"({"cmd":"run_case","case":)" + caseJson + R"(,"data":)" + dataJson + "}";
 
-    WickraBenchmark *b = wickra_benchmark_new();
-    const std::string resp = run(b, cmd);
+    // Releases the handle at scope exit, including on every early return below.
+    wickra::benchmark::Benchmark bench;
+    const std::string resp = bench.command(cmd);
+    if (resp.empty()) {
+        std::cerr << "command failed: code " << bench.last_error() << "\n";
+        return 1;
+    }
     const bool ok = resp.find("\"passed\":true") != std::string::npos &&
                     resp.find("\"hash_match\":true") != std::string::npos;
 
-    std::cout << "wickra-benchmark " << wickra_benchmark_version() << "\n";
+    std::cout << "wickra-benchmark " << wickra::benchmark::version() << "\n";
     std::cout << "sma-crossover-01: " << (ok ? "REPRODUCED (passed + hash_match)" : "MISMATCH")
               << "\n";
 
-    wickra_benchmark_free(b);
     if (!ok) {
         std::cerr << "the case did not reproduce\n";
         return 1;

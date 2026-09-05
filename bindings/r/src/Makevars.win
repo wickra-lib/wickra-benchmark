@@ -1,4 +1,7 @@
-# On Windows the C ABI DLL is linked directly (mingw resolves the import stubs
-# from wickra_benchmark.dll); the loader finds it via PATH at run time.
-PKG_CPPFLAGS = -I$(WKBENCH_INC)
-PKG_LIBS = -L$(WKBENCH_LIB) -l:wickra_benchmark.dll
+# configure.win stages the C ABI header and wickra_benchmark.dll into src/, so
+# the package object links against the bundled copy. mingw links directly against
+# a DLL with `-l:`; no import library is needed because the package object
+# (wickrabenchmark.dll) and the ABI (wickra_benchmark.dll) have different names
+# and cannot shadow one another.
+PKG_CPPFLAGS = -I.
+PKG_LIBS = -L. -l:wickra_benchmark.dll
