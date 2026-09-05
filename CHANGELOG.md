@@ -58,6 +58,22 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   release publishes.
 - Licence texts beside every published package (`benchmark-core`,
   `benchmark-cli`, `bindings/python`).
+- The R binding can be installed. `bindings/r/configure` and `configure.win`
+  resolve the C ABI — downloading the prebuilt release asset for the version
+  `DESCRIPTION` names, or using `WKBENCH_INC`/`WKBENCH_LIB` as a dev override —
+  and `src/install.libs.R` bundles the library into the installed package, found
+  through an rpath (`$ORIGIN` / `@loader_path`). Plus `.Rbuildignore`,
+  `src/Makevars.in`, and the three `man/*.Rd` pages R was asking for.
+- `scripts/check_r_abi_skew.py`, the fifth check script: R is the one binding
+  whose native half comes from a published release rather than from this tree, so
+  the wrapper and the ABI can disagree in a way no other binding can. CI builds
+  against the header in the tree and never sees that pairing; r-universe does.
+- `bindings/c/include/wickra_benchmark.hpp`, an optional C++ layer that owns the
+  handle and folds the size-then-write dance of `wickra_benchmark_command` into
+  one call returning a `std::string`. The C++ example now uses it; `run.c` still
+  drives the plain C ABI, so the pair shows both surfaces.
+- An npm tarball check: `files` decides what npm ships, and a name dropped from
+  it is not an error — it is a package that installs and cannot load.
 - A WebAssembly example (`examples/wasm/run.cjs`). WASM was the only binding
   with no example at all.
 - Every one of the nine examples now runs in CI, in the language job that
@@ -89,6 +105,21 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- The R package could not be installed. `src/Makevars` took the C ABI from
+  `WKBENCH_INC`/`WKBENCH_LIB`, described as "set by CI / the installer" — but
+  there was no installer, nothing bundled the library, and `R CMD INSTALL` ended
+  in `LoadLibrary failure: the specified module could not be found`, with
+  `No man pages found in package` above it. r-universe could not have built it,
+  which is why the package was never published.
+- The shipped R test reached above the package for the golden corpus and, not
+  finding it in the tarball, skipped that section silently — so a test that
+  looked as though it had checked cross-language parity had not. Split: the
+  self-contained half stays in the tarball, `tests/golden.R` is excluded from it
+  and runs in CI from the repository root, where it fails loudly instead.
+- `bindings/node/package.json` listed `npm` in `files`, packing the per-platform
+  stub directory into the main tarball, and none of the seven npm packages named
+  the licence texts `release.yml` stages beside them — so npm packed the binary
+  alone.
 - `examples/data/cases/sma-crossover-01.json` kept a stale `expected_hash` after
   an earlier engine bump re-blessed `cases/` and `golden/` but not the runnable
   copy. The C and C++ examples were the only jobs that noticed, failing with

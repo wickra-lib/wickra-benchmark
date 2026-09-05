@@ -1,0 +1,27 @@
+# Keep compiled artifacts out of the R source tarball built by `R CMD build`.
+# The package links the C ABI out-of-tree, so only the glue objects and any
+# locally built shared library live under src/ — none of them belong in a
+# distributable source package; they are produced at install.
+^src/.*\.o$
+^src/.*\.so$
+^src/.*\.dll$
+^src/.*\.dylib$
+^src/symbols\.rds$
+^\.gitignore$
+# Generated at configure time, never shipped in the source tarball: the Makevars
+# produced from Makevars.in, the staged C ABI header and library, and the
+# downloaded release asset with its extraction directory.
+^src/Makevars$
+^src/wickra_benchmark\.h$
+^src/wickra-benchmark-c\.tar\.gz$
+^src/wickra-benchmark-c$
+^src/libwickra_benchmark\.
+
+# The golden corpus lives at the repository root, outside this package, so
+# tests/golden.R only resolves when run from there — which CI does explicitly.
+# `R CMD check` runs everything under tests/ from the built tarball, where the
+# corpus does not exist. Shipping this file would either fail that check or, if
+# it skipped silently, make the shipped test look as though it had run the
+# cross-language parity check when it had not. run_tests.R builds its own data
+# and travels fine.
+^tests/golden\.R$

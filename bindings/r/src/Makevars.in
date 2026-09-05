@@ -1,0 +1,7 @@
+# Generated into src/Makevars by ../configure; the @WKBENCH_RPATH@ token is
+# substituted per-OS ($ORIGIN on Linux, @loader_path on macOS). configure stages
+# the C ABI header (wickra_benchmark.h) and shared library
+# (libwickra_benchmark.so/.dylib) into src/, so the package object links against
+# the bundled copy rather than against a path that only exists on the build host.
+PKG_CPPFLAGS = -I.
+PKG_LIBS = -L. -lwickra_benchmark @WKBENCH_RPATH@

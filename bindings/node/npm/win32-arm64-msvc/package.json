@@ -4,7 +4,9 @@
   "description": "Native binding for wickra-benchmark (win32-arm64-msvc). Installed automatically as an optional dependency of wickra-benchmark on matching platforms.",
   "main": "wickra-benchmark.win32-arm64-msvc.node",
   "files": [
-    "wickra-benchmark.win32-arm64-msvc.node"
+    "wickra-benchmark.win32-arm64-msvc.node",
+    "LICENSE-MIT",
+    "LICENSE-APACHE"
   ],
   "license": "MIT OR Apache-2.0",
   "engines": {

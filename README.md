@@ -277,7 +277,7 @@ response is byte-identical to the committed one.
 ## Requirements
 
 Rust **1.86** (workspace) / **1.88** (Node binding). Per-binding toolchains:
-Python 3.9+, Node.js 22+, .NET 8, JDK 22+, Go 1.23+, R release, and a C11/C++14
+Python 3.9+, Node.js 22+, .NET 8, JDK 22+, Go 1.23+, R 4.1+, and a C11/C++14
 compiler with CMake for the C example.
 
 ## Benchmarks

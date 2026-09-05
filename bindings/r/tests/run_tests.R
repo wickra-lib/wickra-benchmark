@@ -1,6 +1,12 @@
 ## Plain-R tests for the wickra-benchmark R binding (no testthat dependency).
 ## Mirrors the Rust/Python/Node/Go/C#/Java tests and doubles as the completeness
 ## guard: it exercises the full public surface (version + new + command).
+##
+## Everything here builds its own data, so it runs from the installed package
+## with nothing above it -- which is what `R CMD check` does from the built
+## tarball. The cross-language golden parity check needs the corpus at the
+## repository root and therefore lives in golden.R, which .Rbuildignore keeps out
+## of the tarball.
 
 library(wickrabenchmark)
 
@@ -53,37 +59,5 @@ stopifnot(identical(wkbench_command(bench, run_case_request()), result))
 ## an unknown command is an in-band error, not a hard error
 inband <- wkbench_command(bench, '{"cmd":"nope"}')
 stopifnot(grepl('"ok":false', inband, fixed = TRUE))
-
-## cross-language golden parity: for each committed golden/commands/*.json (a
-## full command envelope), drive command_json and assert the response equals
-## golden/expected/<name>.json byte-for-byte. The binding returns the core's
-## canonical command output verbatim, so byte equality is the exact
-## cross-language parity check. The fixtures arrive in a later phase; until then
-## the golden section is skipped.
-golden_dir <- function() {
-  d <- normalizePath(getwd(), mustWork = FALSE)
-  for (i in seq_len(8)) {
-    g <- file.path(d, "golden")
-    if (dir.exists(file.path(g, "commands"))) {
-      return(g)
-    }
-    d <- dirname(d)
-  }
-  NULL
-}
-
-g <- golden_dir()
-if (!is.null(g)) {
-  for (cmd_path in list.files(file.path(g, "commands"), pattern = "\\.json$", full.names = TRUE)) {
-    name <- basename(cmd_path)
-    cmd_json <- paste(readLines(cmd_path, warn = FALSE), collapse = "\n")
-    expected <- trimws(paste(
-      readLines(file.path(g, "expected", name), warn = FALSE), collapse = "\n"
-    ))
-    gbench <- wkbench_new()
-    got <- wkbench_command(gbench, cmd_json)
-    stopifnot(identical(trimws(got), expected))
-  }
-}
 
 cat("wickra-benchmark R tests passed\n")
