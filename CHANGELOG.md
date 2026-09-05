@@ -58,6 +58,15 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   release publishes.
 - Licence texts beside every published package (`benchmark-core`,
   `benchmark-cli`, `bindings/python`).
+- A WebAssembly example (`examples/wasm/run.cjs`). WASM was the only binding
+  with no example at all.
+- Every one of the nine examples now runs in CI, in the language job that
+  already has the toolchain. Seven of them — Rust, Python, Node, Go, C#, Java
+  and R — were committed and linked from `examples/README.md` but neither built
+  nor run by anything. Only the C and C++ pair was covered, which is how a stale
+  `examples/data/` copy was eventually caught, three jobs away from where it
+  broke. The C# job also packs the NuGet package now, so its packaging metadata
+  is exercised before the tag rather than by the publish job after it.
 
 ### Changed
 
