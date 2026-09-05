@@ -50,6 +50,13 @@ categories = ["finance", "command-line-utilities"]
 wickra-backtest-core = "0.1.4"
 # Workspace-internal core, referenced by the CLI, bench and bindings.
 benchmark-core = { version = "0.1.0", path = "crates/benchmark-core" }
+# The indicator core, underneath the engine. Not called on the recompute path --
+# the engine resolves a strategy's indicator names itself -- but the corpus's
+# hashes depend on these indicators' arithmetic, so tests/indicator_conformance.rs
+# pins the behaviour of the four families the cases actually name. When a hash
+# moves after a dependency bump, that test answers "engine or indicator?" before
+# anyone diffs a report.
+wickra-core = "1.0.4"
 # Serialization — the data-driven boundary (case/suite/report/command as JSON).
 serde = { version = "1", features = ["derive"] }
 # `float_roundtrip` makes serde_json's float parser correctly rounded: a float
