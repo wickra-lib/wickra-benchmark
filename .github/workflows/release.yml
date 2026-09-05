@@ -643,6 +643,14 @@ jobs:
             done
             echo "staged ${RID[$target]}:"; ls -l "$dest"
           done
+      # The only job here that ran a toolchain the runner image happened to
+      # carry. ci.yml names 8.0 for the same project; without it the pack that
+      # ships the package depends on which SDKs the image still preinstalls, and
+      # the net8.0 targeting pack going away would fail this at tag time, after
+      # the other registries have already published.
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "8.0"
       - name: Pack
         uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         with:

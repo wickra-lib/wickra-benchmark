@@ -143,6 +143,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- `csharp-publish` sets up its toolchain. It was the one release job that ran a
+  toolchain the runner image happened to carry: `ci.yml` names .NET 8.0 for the
+  same project, but the job that packs and pushes the NuGet package named
+  nothing. The image retiring the net8.0 targeting pack would have failed it at
+  tag time, after the other registries had already published — and `Attach assets
+  to the GitHub Release` needs every publish job, so the release would have been
+  lost with it. Same pinned action and version as the other two workflows.
+
 - The blessing recipe, in all three places that carry it (`cases/README.md`,
   `docs/CASES.md`, `docs/Cookbook.md`), produced a case with a null strategy. It
   piped `run-case --format json` into a jq filter that reads `description`,
