@@ -8,6 +8,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- `scripts/check_test_counts.py`, wired into the `binding-surface` job and both
+  pull-request templates: it counts the tests each surface declares and holds the
+  numbers in the README's `Testing` section to them. Counting is static, a grep
+  for each language's declaration form, because the alternative is running ten
+  toolchains to check a sentence — which nothing would then run on a pull
+  request. Sixteen counts are checked, from the `benchmark-core` units to the
+  golden envelopes.
+
 - `benchmark-core`: `BenchmarkCase`, `Suite`, `CaseResult`, `SuiteReport`, the
   `run_case` / `run_suite` / `run_suite_inline` runner, blake3 canonical hashing
   (shared with `wickra-proof`), and the `command_json` boundary.
@@ -134,6 +142,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   their keys sorted, so an authored `strategy` is normalised on the way in.
 
 ### Fixed
+
+- The README's `Testing` counts match the sources again. Adding a test does not
+  touch the README and nothing compared the two, so eight of the sixteen stated
+  numbers had gone stale: the batch-equivalence tests raised Python to 10, Node
+  to 12, WASM to 7, and C#, Java and Go to 7 each while the README still said
+  8/10/5/5/5/5, R went from one script suite to three, and `benchmark-core` grew
+  a fifth integration suite — the six indicator-conformance tests — while the
+  text went on saying four.
 
 - `.gitignore` covers the files the repository's own documented build commands
   produce. `configure` stages the C ABI into `bindings/r/src/` and writes

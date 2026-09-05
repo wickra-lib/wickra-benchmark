@@ -149,6 +149,13 @@ jobs:
       - name: The corpus copies agree
         run: python3 scripts/check_corpus_sync.py
 
+      # The README's Testing section states a count for every surface, and those
+      # numbers are the only account a reader gets of how much each binding is
+      # held to. Nothing recomputes them when a test is added, and they had gone
+      # stale twice by the time this was written.
+      - name: The stated test counts match the sources
+        run: python3 scripts/check_test_counts.py
+
   # An early heads-up on a broken link in a pull request. Deliberately
   # non-blocking: external link rot is non-deterministic, and a third-party site
   # rate-limiting must never fail someone's PR. The authoritative run is the
