@@ -242,19 +242,21 @@ The commands are in
 [Building everything from source](#building-everything-from-source).
 
 - `benchmark-core` — 14 unit tests over case and suite validation, the CSV candle
-  loader, canonicalization and hashing. Plus four integration suites: 12
-  conformance tests (determinism, ordering, the pass/fail tally), 4 property
-  tests, the path-vs-inline equivalence test (`run_suite` and `run_suite_inline`
-  must agree on the same data), and the golden runner.
+  loader, canonicalization and hashing. Plus five integration suites: 12
+  conformance tests (determinism, ordering, the pass/fail tally), 6
+  indicator-conformance tests (every frozen `expected_hash` is downstream of the
+  indicator arithmetic, so a moved hash has two possible causes; these separate
+  them), 4 property tests, the path-vs-inline equivalence test (`run_suite` and
+  `run_suite_inline` must agree on the same data), and the golden runner.
 - `benchmark-cli` — 4 tests over argument parsing.
 - `bindings/c` — 6 Rust tests driving the ABI itself, including its error paths,
   so a null or malformed command is proven to be reported rather than
   dereferenced.
-- `bindings/python` — 8 pytest cases: smoke, golden parity, surface
-  completeness. `bindings/node` — 10 `node --test` cases, same shape.
-  `bindings/wasm` — 5 against the built package.
-- `bindings/csharp` — 5 xUnit cases. `bindings/java` — 5 JUnit cases.
-  `bindings/go` — 5 `go test` cases. `bindings/r` — one script suite.
+- `bindings/python` — 10 pytest cases: smoke, golden parity, surface
+  completeness, batch equivalence. `bindings/node` — 12 `node --test` cases, same
+  shape. `bindings/wasm` — 7 against the built package.
+- `bindings/csharp` — 7 xUnit cases. `bindings/java` — 7 JUnit cases.
+  `bindings/go` — 7 `go test` cases. `bindings/r` — 3 script suites.
 - `fuzz/` — four targets over the untrusted-input surface: the case parser, the
   suite parser, `run_case`, and the `command_json` envelope.
 

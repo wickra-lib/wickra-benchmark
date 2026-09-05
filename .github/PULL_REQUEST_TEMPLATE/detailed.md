@@ -85,6 +85,8 @@ everywhere. Each of these is cheap to break and expensive to notice later.
       `WICKRA_BLESS=1 cargo test -p benchmark-core --test golden`, not hand-edited
 - [ ] `python scripts/check_corpus_sync.py` passes — every copy of a case
       (`cases/`, `cases/suite.json`, `golden/`, `examples/data/`) agrees
+- [ ] `python scripts/check_test_counts.py` passes — the README's `Testing`
+      section states a count per surface, and adding a test does not update it
 
 ## Cross-language parity (if you changed the command boundary)
 
