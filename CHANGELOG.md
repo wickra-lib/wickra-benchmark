@@ -42,6 +42,22 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   quality.
 - `bindings/python/tests/run_without_pytest.py`, which runs the whole Python
   suite without a framework.
+- Four check scripts and the `binding-surface` job that runs them:
+  `check_binding_surface.py` holds all ten language surfaces to the C ABI header,
+  `check_version_sync.py` holds 22 version declarations across six package
+  managers to each other, `check_readme_links.py` catches a repository-relative
+  link in a README that ships as a package long description, and
+  `check_license_copies.py` catches a published package that would ship without
+  its licence texts. Plus `scripts/update-lockfiles.sh` to regenerate every
+  committed lockfile.
+- CI jobs `links` (non-blocking lychee on pull requests), `semver`
+  (cargo-semver-checks against the last release) and
+  `python-wheel-container-smoke`, which builds the manylinux and musllinux
+  wheels and imports each one — the musl one inside an alpine container, since
+  the runner is glibc and would otherwise prove nothing about the artefact the
+  release publishes.
+- Licence texts beside every published package (`benchmark-core`,
+  `benchmark-cli`, `bindings/python`).
 
 ### Changed
 
@@ -80,6 +96,27 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `--require-hashes`. No module in `bindings/python/tests` imports pytest, so
   the 3.9 row runs the same eight tests through `run_without_pytest.py` rather
   than pinning a pytest 8.x below the fix for GHSA-6w46-j5rx-g56g.
+- `js-yaml` 4.3.0 (GHSA-5p4m-2wfm-xmqj, CVSS 7.5), a transitive dev dependency
+  of `@napi-rs/cli` in the Node binding's lockfile. Found by osv-scanner on the
+  first run after it was wired in — `cargo deny` cannot see an npm lockfile at
+  all, which is the gap that wiring closed.
+- `deny.toml` allowed crate sources from the `wickra-lib` GitHub org, explaining
+  it as "the exchange facade is consumed as a git dependency". That is
+  `wickra-exchange`'s rationale, and since the engine moved to crates.io there is
+  no git source left at all — cargo-deny reported "no crate source fell under
+  this organization".
+- `osv-scanner.toml` was committed configuration that no workflow ever loaded.
+  `cargo deny` only sees the Rust graph; osv-scanner reads every other lockfile
+  in the tree — npm, pip, maven, nuget, go — which is where the other nine
+  language surfaces get their dependencies.
+- C# was the only binding with two READMEs: a developer-facing one and a nested
+  package one, with the csproj packing the nested copy. Every other binding has
+  exactly one at `bindings/<lang>/README.md` that serves both. Consolidated to
+  match, and verified with `dotnet pack` that the surviving file is what lands
+  in the `.nupkg`.
+- `examples/node/package-lock.json` recorded `@napi-rs/cli ^3.7.2` while the
+  binding it links declares `^3.7.4`: a Dependabot bump reached the binding and
+  not the example's lockfile, and nothing watched it.
 - The dataset-manifest job installed `blake3` unpinned. That job is what stands
   between an edited dataset and a silently changed case hash, so its checker now
   comes from a hash-locked `manifest.txt`.

@@ -1,27 +1,17 @@
-# Wickra Benchmark — C#
+# Wickra Benchmark — C\#
 
-C# binding for [wickra-benchmark](https://github.com/wickra-lib/wickra-benchmark).
-It calls the stable **C ABI** through P/Invoke and returns the core's canonical
-JSON string verbatim, so its responses are byte-identical to the Rust, Python,
-Node.js, WASM, C/C++, Go, Java and R bindings: one runner behind every language.
+Recompute a curated benchmark case or suite with the deterministic Wickra engine
+and confirm its report and hash, from .NET over the Wickra C ABI.
 
-This README is for working on the binding. The one shipped inside the NuGet
-package is [`WickraBenchmark/README.md`](WickraBenchmark/README.md).
+It calls the ABI through P/Invoke and returns the core's canonical JSON string
+verbatim, so its responses are byte-identical to the Rust, Python, Node.js,
+WASM, C/C++, Go, Java and R bindings: one runner behind every language.
 
-## Requirements
+## Install
 
-- .NET 8 SDK
-- The native library `wickra_benchmark` (built from the C-ABI crate)
-
-## Build the native library
-
-```bash
-cargo build -p wickra-benchmark-c            # debug   -> target/debug
-cargo build -p wickra-benchmark-c --release  # release -> target/release
+```sh
+dotnet add package Wickra.Benchmark
 ```
-
-The test project copies the native library next to the test assembly; for your
-own app, ensure `wickra_benchmark.dll` / `.so` / `.dylib` is on the load path.
 
 ## Usage
 
@@ -34,38 +24,59 @@ using Wickra.Benchmark;
 
 using var bench = new Benchmark();
 
-// Ask the suite what it contains.
-string listed = bench.Command(JsonSerializer.Serialize(new
+var runCase = new
 {
-    cmd = "list_cases",
-    suite = JsonSerializer.Deserialize<object>(File.ReadAllText("cases/suite.json")),
-}));
-
-Console.WriteLine(listed);        // {"ids":["breakout-channel-01", ...]}
-Console.WriteLine(Benchmark.Version());
+    cmd = "run_case",
+    @case = new
+    {
+        id = "sma-crossover-01",
+        strategy = strategySpec,      // a wickra-backtest StrategySpec
+        dataset_ref = "sma-uptrend.csv",
+        expected = expectedReport,
+        expected_hash = expectedHash,
+    },
+    data = candles,
+};
+string outJson = bench.Command(JsonSerializer.Serialize(runCase));
+Console.WriteLine(outJson); // the full CaseResult as JSON
 ```
 
-`Command` returns the canonical response string. A malformed command comes back
-as an error envelope (`{"ok":false,"error":...}`) rather than throwing, and no
-panic crosses the boundary. `Benchmark` owns a native handle, so dispose it —
-`using` or `Dispose()`.
+`Benchmark` owns a native handle, so dispose it — `using` or `Dispose()`.
 
-The commands are `run_case`, `run_suite`, `list_cases` and `version`; their
-envelopes are documented in
-[REPRODUCING.md](https://github.com/wickra-lib/wickra-benchmark/blob/main/docs/REPRODUCING.md),
-and one committed example of each lives in
-[`golden/commands/`](../../golden/commands/).
+## Commands
 
-## Test
+| `cmd`         | Payload             | Response                                |
+|---------------|---------------------|-----------------------------------------|
+| `run_case`    | `{case, data}`      | the full `CaseResult`                   |
+| `run_suite`   | `{suite, datasets}` | a `SuiteReport`                         |
+| `list_cases`  | `{suite}`           | `{ids:[...]}` (sorted)                  |
+| `version`     | —                   | `{version:...,engine_version:...}`      |
+
+`data` is an array of candles; `datasets` maps each `dataset_ref` to its candle
+array. One committed example of every envelope lives in
+[`golden/commands/`](https://github.com/wickra-lib/wickra-benchmark/tree/main/golden/commands).
+
+Domain errors (a bad case, an unknown command) come back in-band as
+`{"ok":false,"error":...}`; only null/UTF-8/panic conditions throw.
+
+## Building and testing the binding
+
+Requires the .NET 8 SDK and the native library, built from the C-ABI crate:
 
 ```bash
-dotnet test WickraBenchmark.Tests/WickraBenchmark.Tests.csproj
+cargo build -p wickra-benchmark-c --release  # -> target/release
+dotnet test bindings/csharp/WickraBenchmark.Tests/WickraBenchmark.Tests.csproj
 ```
 
-The golden test replays every envelope in [`golden/commands/`](../../golden/commands/)
-and asserts the response equals [`golden/expected/`](../../golden/expected/) byte
-for byte. That is the cross-language parity check — it is the same assertion in
-all ten languages.
+The test project copies the native library next to the test assembly; for your
+own app, ensure `wickra_benchmark.dll` / `.so` / `.dylib` is on the load path.
+
+The golden test replays every envelope in
+[`golden/commands/`](https://github.com/wickra-lib/wickra-benchmark/tree/main/golden/commands)
+and asserts the response equals
+[`golden/expected/`](https://github.com/wickra-lib/wickra-benchmark/tree/main/golden/expected)
+byte for byte. That is the cross-language parity check — the same assertion runs
+in all ten languages.
 
 ## Documentation
 
@@ -89,5 +100,7 @@ performance. Provided **as is**, without warranty of any kind.
 
 ## License
 
-Licensed under either of [MIT](https://github.com/wickra-lib/wickra-benchmark/blob/main/LICENSE-MIT) or
-[Apache-2.0](https://github.com/wickra-lib/wickra-benchmark/blob/main/LICENSE-APACHE) at your option.
+Licensed under either of
+[MIT](https://github.com/wickra-lib/wickra-benchmark/blob/main/LICENSE-MIT) or
+[Apache-2.0](https://github.com/wickra-lib/wickra-benchmark/blob/main/LICENSE-APACHE)
+at your option.
