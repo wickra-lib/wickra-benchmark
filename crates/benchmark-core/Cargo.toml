@@ -33,6 +33,9 @@ default = ["parallel"]
 parallel = ["dep:rayon"]
 
 [dev-dependencies]
+# Used only by tests/indicator_conformance.rs. benchmark-core does not compute
+# indicators -- the engine does -- so this stays out of the runtime graph.
+wickra-core.workspace = true
 serde_json.workspace = true
 proptest.workspace = true
 

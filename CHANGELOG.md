@@ -80,6 +80,15 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   as a failure.
 - An npm tarball check: `files` decides what npm ships, and a name dropped from
   it is not an error — it is a package that installs and cannot load.
+- `crates/benchmark-core/tests/indicator_conformance.rs`, which pins the four
+  indicator families the committed cases actually name — `Sma`, `Ema`, `Rsi`,
+  `Donchian` — straight from `wickra-core`. Every frozen `expected_hash` is
+  downstream of that arithmetic, so when a hash moves after a dependency bump
+  there are two candidates and the report cannot tell them apart: the engine
+  changed how signals become trades, or an indicator changed the numbers the
+  signals are made of. This answers that. A companion test reads `cases/` and
+  fails if a case names a family the file does not pin, so the coverage cannot
+  quietly fall behind the corpus.
 - A batch-equivalence test in every binding: a suite must produce exactly what
   its cases produce run one at a time. `run_suite` is the batch form of
   `run_case` — it fans the cases out over rayon and re-sorts by `id` before
