@@ -124,6 +124,20 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- The six open dependency updates are taken, each checked on its version rather
+  than on its check mark. Nine pinned actions (`codeql-action` 4.37.9,
+  `setup-java` 6.0.0, `attest-build-provenance` 4.2.2, `action-gh-release` 3.0.3,
+  `install-action` 2.87.1, `setup-r` 2.13.0, `zizmor-action` 0.6.2); `pyo3`
+  0.29.2, `napi` 3.12.2, `serde` 1.0.229, `blake3` 1.8.7, `clap` 4.6.6,
+  `thiserror` 2.0.20, `toml` 1.1.5, `wasm-bindgen` 0.2.128 in the lock;
+  `junit-jupiter` 6.1.3; `Microsoft.NET.Test.Sdk` 18.9.0 and
+  `xunit.runner.visualstudio` 4.0.0; `@napi-rs/cli` 3.8.6. Two needed more than a
+  lock refresh: the xunit runner is a major, and the napi CLI regenerates
+  `bindings/node/index.js`, which is committed — the loader it emits now chains
+  load errors by `cause` and keeps a lazy native fallback under
+  `NAPI_RS_FORCE_WASI=true` instead of forcing WASI outright. `setup-java` was on
+  6.0.0 in `ci.yml` and 5.6.0 in `release.yml`; both now name the same pin.
+
 - The backtest engine is consumed from crates.io (`wickra-backtest-core 0.1.4`)
   instead of git. A git dependency makes the whole workspace unpublishable, and
   the engine has been on crates.io since 0.1.2. The bump re-shapes every report
