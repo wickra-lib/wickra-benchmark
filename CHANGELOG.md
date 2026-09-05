@@ -157,6 +157,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- `bindings/java/pom.xml` keeps the `<scm>`, `<developers>`, `release` profile and
+  `waitUntil=published` that the previous entry added. Taking the junit bump as
+  dependabot's whole file reverted them: that branch was cut before those landed,
+  so a stale copy carried the old pom back in. Only the `junit.version` property
+  moves now, and the rest is unchanged from before the dependency batch.
+
 - The WASM job runs `node --test bindings/wasm/tests/*.test.js`, a glob, not the
   bare directory. Node 22 resolves a `--test` path argument as a file and fails
   with `Cannot find module '.../bindings/wasm/tests'`; Node 20 searched it. The
