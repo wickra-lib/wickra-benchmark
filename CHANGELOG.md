@@ -157,6 +157,15 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- The WASM job runs `node --test bindings/wasm/tests/*.test.js`, a glob, not the
+  bare directory. Node 22 resolves a `--test` path argument as a file and fails
+  with `Cannot find module '.../bindings/wasm/tests'`; Node 20 searched it. The
+  repository requires Node 22+ and CI runs 22 and 24, so the directory form was
+  wrong for every supported version — as was the same form in the README's
+  build-from-source block. Explicit file paths are what the job passed before,
+  and a glob still picks up a new test file, which was the point of taking the
+  directory in the first place.
+
 - `nupkg/` is ignored. `dotnet pack -o nupkg` runs in `ci.yml` on every Linux
   run and is the command a maintainer repeats locally to check the packaging
   metadata, so it belonged in the same sweep as the other generated output.

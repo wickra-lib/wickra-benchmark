@@ -520,9 +520,11 @@ jobs:
         run: wasm-pack build --target nodejs
         working-directory: bindings/wasm
       - name: Assert wasm reproduces the golden fixtures
-        # The directory, not one named file: batch_equivalence.test.js sat beside
-        # golden.test.js for a full release cycle without ever being run.
-        run: node --test bindings/wasm/tests/
+        # A glob, not one named file: batch_equivalence.test.js sat beside
+        # golden.test.js for a full release cycle without ever being run. Not the
+        # bare directory either -- Node 22 resolves a path argument as a file and
+        # reports "Cannot find module", where Node 20 searched it.
+        run: node --test bindings/wasm/tests/*.test.js
       # Same pkg/ build this job produced, driven the way a reader would.
       - name: Run the WASM example
         run: node examples/wasm/run.cjs

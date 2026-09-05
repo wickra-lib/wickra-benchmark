@@ -204,7 +204,7 @@ cd bindings/python && maturin develop --release && pytest
 cd bindings/node && npm install && npm run build && npm test
 
 # WASM binding (requires wasm-pack)
-cd bindings/wasm && wasm-pack build --target nodejs --out-dir pkg && node --test tests/
+cd bindings/wasm && wasm-pack build --target nodejs --out-dir pkg && node --test tests/*.test.js
 
 # C ABI (cdylib + staticlib + generated header)
 cargo build -p wickra-benchmark-c --release
