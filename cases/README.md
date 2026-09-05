@@ -52,9 +52,16 @@ wickra-benchmark list-cases --suite cases/suite.json
 ```sh
 # run the draft, take the engine's own recomputed report + hash as the golden values
 wickra-benchmark run-case --case cases/my-case.draft.json --data-root datasets --format json \
-  | jq '{id, description, strategy, dataset_ref, expected: .recomputed, expected_hash: .hash}' \
+  | jq --slurpfile draft cases/my-case.draft.json \
+      '$draft[0] + {expected: .recomputed, expected_hash: .hash}' \
   > cases/my-case.json
 ```
+
+The draft is read twice on purpose. The `run-case` response carries only `id`,
+`passed`, `hash_match`, `hash` and `recomputed` -- not the `description`,
+`strategy` or `dataset_ref` you wrote -- so those have to come from the draft
+itself. `$draft[0] + {...}` keeps the draft's field order and overwrites just the
+two values the engine produced.
 
 The blessed case then self-passes by construction: rerunning it recomputes the
 same report and the same hash, so `passed` and `hash_match` are both `true`.

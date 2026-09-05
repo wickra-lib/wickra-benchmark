@@ -42,7 +42,8 @@ the engine fill them in:
 
 ```sh
 wickra-benchmark run-case --case cases/my-case.draft.json --data-root datasets --format json \
-  | jq '{id, description, strategy, dataset_ref, expected: .recomputed, expected_hash: .hash}' \
+  | jq --slurpfile draft cases/my-case.draft.json \
+      '$draft[0] + {expected: .recomputed, expected_hash: .hash}' \
   > cases/my-case.json
 ```
 
