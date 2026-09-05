@@ -31,6 +31,12 @@ describes something the repository *owns* — and that a release can change:
 - **[Cookbook.md](Cookbook.md)** — short recipes, including gating a build on a
   suite that must still reproduce.
 
+A site aggregating the same quickstarts is built from
+[wickra-benchmark-site](https://github.com/wickra-lib/wickra-benchmark-site). It
+is not linked from here yet: `benchmark.wickra.org` does not resolve until the
+DNS record and the Cloudflare Pages project point at that repository, and a link
+to a host that answers nothing is worse than no link.
+
 ## What does not belong here
 
 Anything that duplicates a binding README or the rustdoc. A second
