@@ -29,7 +29,96 @@ jobs:
   # --------------------------------------------------------------------------
   # crates.io: benchmark-core then the wickra-benchmark-cli crate (wickra-benchmark binary)
   # --------------------------------------------------------------------------
+  # --------------------------------------------------------------------------
+  # The cut between building and publishing. Everything above it is repeatable;
+  # everything below it reaches a registry and cannot be taken back. Without a
+  # gate each publish job hangs only off its own build, so a workspace that fails
+  # to build for one language still publishes the other five.
+  # --------------------------------------------------------------------------
+  gate:
+    name: Gate the irreversible publish
+    needs: [python-wheels, python-sdist, node-build, c-abi-build, cli-binaries]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60 # waits for ci.yml to settle; the wait itself is capped at 45 minutes
+    permissions:
+      actions: read # list the workflow runs for this commit
+      contents: read
+    steps:
+      - name: Refuse anything that is not a version tag
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+        run: |
+          if [ "$EVENT_NAME" != "push" ] || [[ "$REF" != refs/tags/v* ]]; then
+            echo "::error::refusing to publish from '$REF' (event: $EVENT_NAME) -- only a pushed refs/tags/v* may publish"
+            exit 1
+          fi
+          echo "publishing from $REF"
+
+      - name: The tagged commit passed CI
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+          THIS_RUN: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+
+          # ci.yml that has not finished yet reports conclusion `pending`, which
+          # is not the same as a failure -- and a tag pushed shortly after its
+          # merge lands while ci.yml is still queued behind this run's own build
+          # jobs. Refusing there turns "tagged a minute early" into a failed
+          # release, so wait for the verdict rather than reading its absence as
+          # one. Bounded to 45 minutes; anything actually red ends this on the
+          # spot, so only the undecided case waits.
+          deadline=$(( $(date +%s) + 45 * 60 ))
+          while :; do
+            runs=$(gh api --paginate \
+              "repos/$REPO/actions/runs?head_sha=$SHA&per_page=100" \
+              --jq '.workflow_runs[] | [.id, .name, .path, .status, (.conclusion // "pending")] | @tsv')
+
+            if [ -z "$runs" ]; then
+              echo "::error::no workflow runs recorded for $SHA -- nothing proves this commit was ever built"
+              exit 1
+            fi
+
+            # This release run is itself in progress on this SHA; so is anything
+            # else still going. Neither is evidence of failure.
+            red=$(printf '%s\n' "$runs" | awk -F'\t' -v this="$THIS_RUN" \
+              '$1 != this && ($5 == "failure" || $5 == "timed_out" || $5 == "action_required") { print "  " $2 " (" $5 ")" }')
+            if [ -n "$red" ]; then
+              echo "runs on $SHA:"
+              printf '%s\n' "$runs" | cut -f2,4,5
+              echo "::error::this commit has failing checks; refusing to publish"
+              printf '%s\n' "$red"
+              exit 1
+            fi
+
+            if printf '%s\n' "$runs" | awk -F'\t' '$3 == ".github/workflows/ci.yml" && $5 == "success"' | grep -q .; then
+              break
+            fi
+
+            if ! printf '%s\n' "$runs" | awk -F'\t' '$3 == ".github/workflows/ci.yml" && $4 != "completed"' | grep -q .; then
+              echo "runs on $SHA:"
+              printf '%s\n' "$runs" | cut -f2,4,5
+              echo "::error::no successful ci.yml run for $SHA -- tag a commit that has passed CI on main"
+              exit 1
+            fi
+
+            if [ "$(date +%s)" -ge "$deadline" ]; then
+              echo "::error::ci.yml on $SHA did not finish within 45 minutes; refusing to publish"
+              exit 1
+            fi
+            echo "ci.yml on $SHA has not finished yet -- waiting"
+            sleep 30
+          done
+
+          echo "runs on $SHA:"
+          printf '%s\n' "$runs" | cut -f2,4,5
+          echo "ci.yml is green on $SHA and nothing else is red"
+
   cargo-publish:
+    needs: gate
     name: Publish to crates.io
     timeout-minutes: 45
     runs-on: ubuntu-latest
@@ -170,7 +259,7 @@ jobs:
   python-publish:
     name: Publish to PyPI
     timeout-minutes: 45
-    needs: [python-wheels, python-sdist]
+    needs: [gate, python-wheels, python-sdist]
     runs-on: ubuntu-latest
     environment: release
     steps:
@@ -232,7 +321,7 @@ jobs:
   node-publish:
     name: Publish to npm
     timeout-minutes: 45
-    needs: node-build
+    needs: [gate, node-build]
     runs-on: ubuntu-latest
     environment: release
     permissions:
@@ -348,6 +437,7 @@ jobs:
   # WASM: wasm-pack build + npm publish (as `wickra-benchmark-wasm`)
   # --------------------------------------------------------------------------
   wasm-publish:
+    needs: gate
     name: Publish wickra-benchmark-wasm to npm
     timeout-minutes: 45
     runs-on: ubuntu-latest
@@ -512,7 +602,7 @@ jobs:
   csharp-publish:
     name: Publish to NuGet
     timeout-minutes: 45
-    needs: c-abi-build
+    needs: [gate, c-abi-build]
     runs-on: ubuntu-latest
     environment: release
     permissions:
@@ -589,7 +679,7 @@ jobs:
   java-publish:
     name: Publish to Maven Central
     timeout-minutes: 45
-    needs: c-abi-build
+    needs: [gate, c-abi-build]
     runs-on: ubuntu-latest
     environment: release
     steps:
@@ -643,6 +733,15 @@ jobs:
           CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: mvn -B -f bindings/java -Prelease deploy -DskipTests
+      # Maven Central gets the jar from the deploy above; the GitHub release page
+      # only gets what is uploaded as an artifact and then staged. Without this
+      # the jar was the one published artefact with no copy on the release.
+      - name: Upload the jar for the release page
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: java-jar
+          path: bindings/java/target/*.jar
+          if-no-files-found: error
 
   # Mirror the in-repo Go module to the standalone wickra-benchmark-go repository so
   # `go get github.com/wickra-lib/wickra-benchmark-go` builds with no extra steps.
@@ -653,7 +752,7 @@ jobs:
   go-mirror:
     name: Mirror the Go module to wickra-benchmark-go
     timeout-minutes: 45
-    needs: c-abi-build
+    needs: [gate, c-abi-build]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -670,7 +769,13 @@ jobs:
           set -e
           out=wickra-benchmark-go-module
           mkdir -p "$out/include" "$out/lib"
-          cp bindings/go/*.go "$out/"
+          # Not *.go: the test files search upwards for golden/, which exists
+          # in this repository and not in the consumer's module. Copying them
+          # ships a module whose `go test ./...` cannot pass.
+          for f in bindings/go/*.go; do
+            case "$f" in *_test.go) continue ;; esac
+            cp "$f" "$out/"
+          done
           cp bindings/go/include/wickra_benchmark.h "$out/include/"
           cp bindings/go/README.md "$out/"
           cp LICENSE-MIT LICENSE-APACHE "$out/"
@@ -698,6 +803,22 @@ jobs:
             mkdir -p "$out/lib/$dir"; cp "$src" "$out/lib/$dir/"
           done
           echo "assembled module:"; find "$out" -type f | sort
+      # Push a module that does not compile and `go get` fails for everyone, with
+      # nothing in this repository red. Build it here, against the libraries just
+      # staged into it, before it leaves.
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: "stable"
+          cache: false
+      - name: Build the assembled module before pushing it
+        shell: bash
+        run: |
+          set -e
+          cd wickra-benchmark-go-module
+          export CGO_ENABLED=1
+          export LD_LIBRARY_PATH="$PWD/lib/linux_amd64:${LD_LIBRARY_PATH:-}"
+          go vet ./...
+          go build ./...
       - name: Push to wickra-benchmark-go and tag the release
         shell: bash
         env:
@@ -730,7 +851,8 @@ jobs:
   github-release:
     name: Attach assets to the draft GitHub Release
     timeout-minutes: 45
-    needs: [cargo-publish, python-publish, node-publish, wasm-publish, cli-binaries, c-abi-build]
+    needs: [cargo-publish, python-publish, node-publish, wasm-publish, cli-binaries,
+            c-abi-build, csharp-publish, java-publish, go-mirror]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -836,7 +958,8 @@ jobs:
   attestations:
     name: Attest build provenance
     timeout-minutes: 45
-    needs: [cargo-publish, python-wheels, python-sdist, github-release]
+    needs: [cargo-publish, python-wheels, python-sdist, c-abi-build, csharp-publish,
+            java-publish, github-release]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -854,6 +977,25 @@ jobs:
           pattern: wheels-*
           path: artifacts/python
           merge-multiple: true
+      # The nupkg, the jar and the C ABI archives are published artefacts too.
+      # Attesting only the crates and wheels left three of the five ecosystems
+      # with no provenance at all.
+      - name: Download the NuGet package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: nuget-package
+          path: artifacts/nuget
+      - name: Download the jar
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: java-jar
+          path: artifacts/java
+      - name: Download the C ABI archives
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: c-abi-*
+          path: artifacts/c-abi
+          merge-multiple: true
       - name: Attest build provenance
         id: attest
         uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # v4.1.1
@@ -862,6 +1004,9 @@ jobs:
             artifacts/crates/*.crate
             artifacts/python/*.whl
             artifacts/python/*.tar.gz
+            artifacts/nuget/*.nupkg
+            artifacts/java/*.jar
+            artifacts/c-abi/*.tar.gz
       - name: Attach provenance bundle to the GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
