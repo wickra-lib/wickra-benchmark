@@ -27,9 +27,11 @@ build/
 node_modules/
 *.node
 
-# WASM build artifacts
-bindings/wasm/pkg/
-bindings/wasm/pkg-node/
+# WASM build artifacts. A glob rather than a list of out-dirs: the three
+# wasm-pack invocations in this repository write to pkg (nodejs and bundler) and
+# pkg-web, and the list named pkg-node, which nothing produces, while pkg-web,
+# which CI produces on every run, was missing from it.
+bindings/wasm/pkg*/
 
 # Go: the C ABI library is staged per-platform by CI, never committed here.
 bindings/go/lib/*/
@@ -41,12 +43,24 @@ obj/
 # Java / Maven build artifacts
 bindings/java/target/
 
-# R build artifacts
+# R build artifacts. configure/configure.win stage the C ABI into src/ and
+# generate Makevars from Makevars.in, so a contributor who follows the documented
+# build leaves six generated files in a tracked directory. .Rbuildignore already
+# lists all of them because they must not reach the source tarball either; this
+# block mirrors it.
 bindings/r/.rlib/
 bindings/r/src/*.o
 bindings/r/src/*.so
 bindings/r/src/*.dll
-bindings/r/..Rcheck/
+bindings/r/src/*.dylib
+bindings/r/src/symbols.rds
+bindings/r/src/Makevars
+bindings/r/src/wickra_benchmark.h
+bindings/r/src/wickra-benchmark-c.tar.gz
+bindings/r/src/wickra-benchmark-c/
+# R CMD check writes <package>.Rcheck; the previous entry had a second dot and
+# so named a directory called "..Rcheck", which nothing creates.
+bindings/r/*.Rcheck/
 
 # Local secrets — never commit credentials.
 .env

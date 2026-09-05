@@ -135,6 +135,16 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- `.gitignore` covers the files the repository's own documented build commands
+  produce. `configure` stages the C ABI into `bindings/r/src/` and writes
+  `Makevars` from `Makevars.in`; six of those generated paths were untracked and
+  unignored, so `R CMD INSTALL bindings/r` left them for the next `git add -A` to
+  pick up. `.Rbuildignore` already listed every one of them, for the same reason
+  in a different tree, and this block now mirrors it. The `.Rcheck` entry had a
+  second dot and so named a directory nothing creates. The WASM entries listed
+  `pkg-node`, which no invocation writes, and omitted `pkg-web`, which CI writes
+  on every run.
+
 - Three of the eight batch-equivalence tests were never executed. The Python
   3.9 row runs `run_without_pytest.py`, whose module list was not extended when
   `test_batch_equivalence` was added, so the floor interpreter covered 8 of the
