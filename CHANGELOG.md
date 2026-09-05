@@ -8,6 +8,32 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- The case registry grows from five cases to **fifteen**, over ten deterministic
+  datasets instead of five, closing the roadmap item that said five cases of
+  60-80 bars was enough to prove the machinery reproduces and not enough to call
+  a benchmark suite. The three gaps it named are what the new cases fill:
+  - *Regime variety.* `downtrend.csv` (a falling trend with rallies),
+    `volatility-shock.csv` (quiet drift, then the same drift under a large
+    oscillation) and `choppy.csv` (two fast cycles beating against each other,
+    no trend at all).
+  - *Long series.* `long-trend.csv` at 600 bars and `long-range.csv` at 750,
+    where warmup is a small part of the run rather than most of it.
+  - *Strategy families.* MACD, Bollinger bands, ATR, rate of change and a
+    weighted moving average join the crossovers and the breakout — and with them
+    the parts of the spec DSL the corpus had never exercised: `short_entry` /
+    `short_exit`, an `all` of two conditions, `rising`, and an exit driven by
+    `bars_since_entry` rather than by a signal.
+  Every case trades: 1 to 15 trades each, winners and losers, drawdowns from
+  0.05% to 35%. The five existing cases are byte-identical — their hashes are
+  unchanged, and only `suite.json` grew.
+- `indicator_conformance` pins the five families the new cases introduce, one
+  test each, on inputs whose values are exact rather than approximate: a
+  weighted mean of 0, 0, 6 over weights 1, 2, 3 is exactly 3; a constant true
+  range averages to itself; a flat series has no rate of change and no
+  deviation; and two averages of one constant cannot differ. `PINNED` goes from
+  four families to nine, and the guard that fails when a case names an unpinned
+  family is what forced them to be written.
+
 - `scripts/check_test_counts.py`, wired into the `binding-surface` job and both
   pull-request templates: it counts the tests each surface declares and holds the
   numbers in the README's `Testing` section to them. Counting is static, a grep
