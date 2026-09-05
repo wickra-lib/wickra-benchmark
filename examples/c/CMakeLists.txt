@@ -21,6 +21,8 @@ set(WICKRA_BENCHMARK_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../target/release"
 
 set(WICKRA_BENCHMARK_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/../../bindings/c/include")
 set(WICKRA_BENCHMARK_DATA "${CMAKE_CURRENT_SOURCE_DIR}/../data")
+# The cross-language golden corpus lives at the repository root.
+set(WICKRA_BENCHMARK_GOLDEN "${CMAKE_CURRENT_SOURCE_DIR}/../../golden")
 
 find_library(WICKRA_BENCHMARK_LIB
     NAMES wickra_benchmark libwickra_benchmark
@@ -32,6 +34,15 @@ target_include_directories(run PRIVATE "${WICKRA_BENCHMARK_INCLUDE}")
 target_link_libraries(run PRIVATE "${WICKRA_BENCHMARK_LIB}")
 target_compile_definitions(run PRIVATE DATA_DIR="${WICKRA_BENCHMARK_DATA}")
 
+# Golden parity and batch equivalence, from the language that consumes the ABI
+# rather than the one that defines it. Every other binding carries both.
+add_executable(golden_test golden_test.c)
+target_include_directories(golden_test PRIVATE "${WICKRA_BENCHMARK_INCLUDE}")
+target_link_libraries(golden_test PRIVATE "${WICKRA_BENCHMARK_LIB}")
+target_compile_definitions(golden_test PRIVATE
+    DATA_DIR="${WICKRA_BENCHMARK_DATA}"
+    GOLDEN_DIR="${WICKRA_BENCHMARK_GOLDEN}")
+
 add_executable(runpp run.cpp)
 target_include_directories(runpp PRIVATE "${WICKRA_BENCHMARK_INCLUDE}")
 target_link_libraries(runpp PRIVATE "${WICKRA_BENCHMARK_LIB}")
@@ -42,7 +53,7 @@ target_compile_definitions(runpp PRIVATE DATA_DIR="${WICKRA_BENCHMARK_DATA}")
 # it next to each example after build. (Unix resolves the .so/.dylib via the
 # linker's embedded path, so this is Windows-only.)
 if(WIN32)
-    foreach(example run runpp)
+    foreach(example run runpp golden_test)
         add_custom_command(TARGET ${example} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 "${WICKRA_BENCHMARK_LIB_DIR}/wickra_benchmark.dll"
@@ -54,5 +65,6 @@ endif()
 enable_testing()
 add_test(NAME run COMMAND run)
 add_test(NAME runpp COMMAND runpp)
+add_test(NAME golden_test COMMAND golden_test)
 # A missing runtime dependency must fail fast, never block the runner for hours.
-set_tests_properties(run runpp PROPERTIES TIMEOUT 60)
+set_tests_properties(run runpp golden_test PROPERTIES TIMEOUT 60)

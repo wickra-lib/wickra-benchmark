@@ -80,6 +80,18 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   as a failure.
 - An npm tarball check: `files` decides what npm ships, and a name dropped from
   it is not an error — it is a package that installs and cannot load.
+- A batch-equivalence test in every binding: a suite must produce exactly what
+  its cases produce run one at a time. `run_suite` is the batch form of
+  `run_case` — it fans the cases out over rayon and re-sorts by `id` before
+  tallying, so the two paths share an engine but not a control flow, and nothing
+  held them to the same answer. Three things could break independently and fail
+  no other test: a case picking up state from the one before it, results
+  returning in scheduling order rather than sorted, and a tally disagreeing with
+  the results it counted.
+- `examples/c/golden_test.c`. C had neither a golden nor an equivalence check
+  from the consuming side: its only coverage was Rust unit tests inside
+  `bindings/c/src/lib.rs`, which exercise the ABI from the language that defines
+  it rather than the one that calls it.
 - A WebAssembly example (`examples/wasm/run.cjs`). WASM was the only binding
   with no example at all.
 - Every one of the nine examples now runs in CI, in the language job that
