@@ -36,9 +36,14 @@ bindings/wasm/pkg*/
 # Go: the C ABI library is staged per-platform by CI, never committed here.
 bindings/go/lib/*/
 
-# .NET build artifacts
+# .NET build artifacts. nupkg/ is where `dotnet pack -o nupkg` lands, which
+# ci.yml runs on every Linux run and a maintainer runs locally to check the
+# packaging metadata. The artifact staging directories in release.yml
+# (artifacts/, c-abi-artifacts/, sboms/) are deliberately not here: nothing
+# creates them outside a runner.
 bin/
 obj/
+nupkg/
 
 # Java / Maven build artifacts
 bindings/java/target/
