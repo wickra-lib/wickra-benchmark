@@ -143,6 +143,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- `nupkg/` is ignored. `dotnet pack -o nupkg` runs in `ci.yml` on every Linux
+  run and is the command a maintainer repeats locally to check the packaging
+  metadata, so it belonged in the same sweep as the other generated output.
+
 - `csharp-publish` sets up its toolchain. It was the one release job that ran a
   toolchain the runner image happened to carry: `ci.yml` names .NET 8.0 for the
   same project, but the job that packs and pushes the NuGet package named
