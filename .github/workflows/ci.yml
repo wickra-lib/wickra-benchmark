@@ -513,7 +513,9 @@ jobs:
         run: wasm-pack build --target nodejs
         working-directory: bindings/wasm
       - name: Assert wasm reproduces the golden fixtures
-        run: node --test bindings/wasm/tests/golden.test.js
+        # The directory, not one named file: batch_equivalence.test.js sat beside
+        # golden.test.js for a full release cycle without ever being run.
+        run: node --test bindings/wasm/tests/
       # Same pkg/ build this job produced, driven the way a reader would.
       - name: Run the WASM example
         run: node examples/wasm/run.cjs
@@ -729,11 +731,15 @@ jobs:
             export DYLD_LIBRARY_PATH="$WKBENCH_LIB:$DYLD_LIBRARY_PATH"
           fi
           R CMD INSTALL bindings/r
-          Rscript bindings/r/tests/run_tests.R
-          # Excluded from the source tarball (.Rbuildignore) because it needs
-          # the corpus above the package; run it here, from the repository root,
-          # where it resolves.
-          Rscript bindings/r/tests/golden.R
+          # Every file under tests/, not a named few: batch_equivalence.R was
+          # added there and listed nowhere, so it never ran. This also picks up
+          # golden.R, which .Rbuildignore keeps out of the source tarball because
+          # it needs the corpus above the package -- it resolves here, where the
+          # working directory is the repository root.
+          for t in bindings/r/tests/*.R; do
+            echo "--- $t"
+            Rscript "$t"
+          done
           Rscript examples/r/run.R
 
   dataset-manifest:
