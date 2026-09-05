@@ -101,7 +101,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   from the consuming side: its only coverage was Rust unit tests inside
   `bindings/c/src/lib.rs`, which exercise the ABI from the language that defines
   it rather than the one that calls it.
-- A WebAssembly example (`examples/wasm/run.cjs`). WASM was the only binding
+- A WebAssembly example (`examples/wasm/run.cjs`).
+- `docs/README.md` names the site the quickstarts are aggregated on, and says
+  plainly that `benchmark.wickra.org` does not resolve until its DNS record and
+  Cloudflare Pages project exist — so nothing links to that host yet. WASM was the only binding
   with no example at all.
 - Every one of the nine examples now runs in CI, in the language job that
   already has the toolchain. Seven of them — Rust, Python, Node, Go, C#, Java
