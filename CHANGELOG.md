@@ -21,9 +21,18 @@ one of them failed after the packages were already live.
   (`wickra-benchmark-cli`). The line had been wrong since it was written and
   could not show, because the publish above it failed first on every attempt this
   repository ever made — first on a token that did not cover `benchmark-core`,
-  and only once that was resolved did control reach this line. The copy now names
-  the real directory, and the step asserts both published crates are represented
-  rather than shipping a release that attests less than it claims.
+  and only once that was resolved did control reach this line. The step now
+  locates each SBOM by the file name `cargo-cyclonedx` gives it rather than by a
+  directory spelled out in the workflow, fails with a named error instead of a
+  bare `cp: cannot stat` when a package produces none, and asserts both published
+  crates are represented rather than shipping a release that attests less than it
+  claims.
+- The GitHub Release body opened with `github.ref_name`, which is the tag only on
+  a tag push. The job resolves the tag itself precisely so a manual dispatch still
+  finds one, and the body now reads that resolved tag — on a dispatch the old
+  reference printed the branch name into a published release.
+- The example output in `examples/README.md` still showed `wickra-benchmark
+  0.1.0`, a version the examples no longer print.
 
 
 ## [0.1.0] - 2026-09-06

@@ -71,14 +71,14 @@ cargo build --release -p wickra-benchmark
 Every example prints the version and confirms the case reproduces:
 
 ```text
-wickra-benchmark 0.1.0
+wickra-benchmark 0.1.1
 sma-crossover-01: REPRODUCED (passed + hash_match)
 ```
 
 The Rust and Python examples print the two booleans explicitly:
 
 ```text
-wickra-benchmark 0.1.0
+wickra-benchmark 0.1.1
 sma-crossover-01: passed=true hash_match=true
 REPRODUCED (passed + hash_match)
 ```
