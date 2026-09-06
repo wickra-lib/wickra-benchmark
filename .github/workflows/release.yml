@@ -184,13 +184,21 @@ jobs:
           cargo cyclonedx --format json --top-level
           mkdir -p sboms
           # cargo-cyclonedx writes <package>.cdx.json inside the crate's own
-          # directory, and here the two differ: directories are short
+          # directory, and here the two names differ: directories are short
           # (benchmark-cli), packages are prefixed (wickra-benchmark-cli). The
           # cli line used the package name as the directory, which has never
-          # existed -- invisible until now, because the publish above it failed
-          # first on every attempt.
-          cp crates/benchmark-core/wickra-benchmark-core.cdx.json sboms/
-          cp crates/benchmark-cli/wickra-benchmark-cli.cdx.json sboms/
+          # existed -- invisible until v0.1.0, because the publish above it
+          # failed first on every attempt before that. Locate each file by the
+          # name cargo-cyclonedx gives it instead of by a directory spelled out
+          # here, so the copy cannot drift from the layout a second time.
+          for pkg in wickra-benchmark-core wickra-benchmark-cli; do
+            src=$(find . -path ./target -prune -o -type f -name "$pkg.cdx.json" -print | head -n1)
+            if [ -z "$src" ]; then
+              echo "::error::cargo-cyclonedx generated no SBOM for $pkg"
+              exit 1
+            fi
+            cp "$src" sboms/
+          done
           # Both published crates must be represented; a silent partial SBOM set
           # would ship a release attesting less than it claims.
           test "$(find sboms -name '*.cdx.json' | wc -l)" -eq 2
@@ -946,7 +954,7 @@ jobs:
           fail_on_unmatched_files: false
           draft: true
           body: |
-            wickra-benchmark ${{ github.ref_name }} — a reproducible, golden-verified benchmark suite for quant backtests: a curated, hash-pinned collection of `(strategy, dataset, expected report)` cases that anyone recomputes and confirms byte-for-byte, in every language. Native Rust, Python, Node.js, WASM plus a C ABI hub for C, C++, C#, Go, Java, R.
+            wickra-benchmark ${{ steps.tag.outputs.tag }} — a reproducible, golden-verified benchmark suite for quant backtests: a curated, hash-pinned collection of `(strategy, dataset, expected report)` cases that anyone recomputes and confirms byte-for-byte, in every language. Native Rust, Python, Node.js, WASM plus a C ABI hub for C, C++, C#, Go, Java, R.
 
             ### Install
 
