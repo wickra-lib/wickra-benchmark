@@ -8,7 +8,7 @@ use serde_json::Value;
 pub use wickra_backtest_core::{BacktestReport, Candle, StrategySpec};
 
 /// A single golden-verified case. Its `strategy` is an embedded wickra-backtest
-/// `StrategySpec` (kept as raw JSON so benchmark-core stays decoupled from the
+/// `StrategySpec` (kept as raw JSON so wickra-benchmark-core stays decoupled from the
 /// engine's struct internals across the FFI boundary); its `expected` report and
 /// `expected_hash` are frozen when the case is blessed and are byte-exact
 /// thereafter. Running the case recomputes the report from `strategy` + the

@@ -9,7 +9,7 @@
 
 use std::path::Path;
 
-use benchmark_core::{load_candles, run_case, BenchmarkCase};
+use wickra_benchmark_core::{load_candles, run_case, BenchmarkCase};
 
 fn main() {
     let data_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../data");
@@ -25,7 +25,7 @@ fn main() {
 
     let result = run_case(&case, &candles).expect("run the case");
 
-    println!("wickra-benchmark {}", benchmark_core::version());
+    println!("wickra-benchmark {}", wickra_benchmark_core::version());
     println!(
         "{}: passed={} hash_match={}",
         result.id, result.passed, result.hash_match

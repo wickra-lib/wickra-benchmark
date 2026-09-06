@@ -6,7 +6,7 @@
 //! invariant — a blessed case reproduces against its own inputs — across an
 //! unbounded range of price paths.
 
-use benchmark_core::{canonicalize, hash, run_case, BenchmarkCase, Candle};
+use wickra_benchmark_core::{canonicalize, hash, run_case, BenchmarkCase, Candle};
 use libfuzzer_sys::fuzz_target;
 use serde_json::{json, Value};
 use wickra_backtest_core::{run, StrategySpec};

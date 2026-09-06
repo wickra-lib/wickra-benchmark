@@ -11,7 +11,7 @@
 
 use thiserror::Error;
 
-/// The result of a benchmark-core operation.
+/// The result of a wickra-benchmark-core operation.
 pub type Result<T> = std::result::Result<T, Error>;
 
 /// Everything that can go wrong while running a case or a suite.

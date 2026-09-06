@@ -46,10 +46,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   numbers in the README's `Testing` section to them. Counting is static, a grep
   for each language's declaration form, because the alternative is running ten
   toolchains to check a sentence — which nothing would then run on a pull
-  request. Sixteen counts are checked, from the `benchmark-core` units to the
+  request. Sixteen counts are checked, from the `wickra-benchmark-core` units to the
   golden envelopes.
 
-- `benchmark-core`: `BenchmarkCase`, `Suite`, `CaseResult`, `SuiteReport`, the
+- `wickra-benchmark-core`: `BenchmarkCase`, `Suite`, `CaseResult`, `SuiteReport`, the
   `run_case` / `run_suite` / `run_suite_inline` runner, blake3 canonical hashing
   (shared with `wickra-proof`), and the `command_json` boundary.
 - Reference CLI (`wickra-benchmark`): `run-case`, `run-suite`, `list-cases`,
@@ -97,7 +97,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   wheels and imports each one — the musl one inside an alpine container, since
   the runner is glibc and would otherwise prove nothing about the artefact the
   release publishes.
-- Licence texts beside every published package (`benchmark-core`,
+- Licence texts beside every published package (`wickra-benchmark-core`,
   `benchmark-cli`, `bindings/python`).
 - The R binding can be installed. `bindings/r/configure` and `configure.win`
   resolve the C ABI — downloading the prebuilt release asset for the version
@@ -157,6 +157,22 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- The core crate is published as `wickra-benchmark-core`, not `benchmark-core`.
+  Every other product in the family names its core after the family —
+  `wickra-core`, `wickra-backtest-core`, `wickra-terminal-core` — and the
+  organisation's crates.io token is scoped to `wickra` and `wickra-*`, so the old
+  name was rejected with a 403 on the first release attempt. The token was right:
+  `benchmark-core` is both off-convention and, on a public registry, a very
+  general name to occupy. The directory stays `crates/benchmark-core`, matching
+  `crates/benchmark-cli`, whose package is likewise the prefixed
+  `wickra-benchmark-cli`. Nothing was published under the old name, so nothing is
+  left behind.
+- Deploying to Maven Central and tagging the Go mirror are idempotent, as
+  crates.io, PyPI and both npm publishes already were. They were the two steps
+  that would fail a re-run on work already done — and a re-run is the normal case
+  after a partial release, because `Attach assets` waits on every publish job, so
+  one failure leaves the rest published and the GitHub release unmade.
+
 - The six open dependency updates are taken, each checked on its version rather
   than on its check mark. Nine pinned actions (`codeql-action` 4.37.9,
   `setup-java` 6.0.0, `attest-build-provenance` 4.2.2, `action-gh-release` 3.0.3,
@@ -185,7 +201,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `ci.yml` filters `pull_request` to `main`, so a pull request against another
   branch no longer builds the whole matrix twice.
 - Blessing is one step and writes every copy of the corpus from the same value:
-  `WICKRA_BLESS=1 cargo test -p benchmark-core --test golden`. Objects land with
+  `WICKRA_BLESS=1 cargo test -p wickra-benchmark-core --test golden`. Objects land with
   their keys sorted, so an authored `strategy` is normalised on the way in.
 
 ### Fixed
@@ -232,7 +248,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   touch the README and nothing compared the two, so eight of the sixteen stated
   numbers had gone stale: the batch-equivalence tests raised Python to 10, Node
   to 12, WASM to 7, and C#, Java and Go to 7 each while the README still said
-  8/10/5/5/5/5, R went from one script suite to three, and `benchmark-core` grew
+  8/10/5/5/5/5, R went from one script suite to three, and `wickra-benchmark-core` grew
   a fifth integration suite — the six indicator-conformance tests — while the
   text went on saying four.
 

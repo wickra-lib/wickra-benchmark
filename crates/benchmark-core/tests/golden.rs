@@ -9,7 +9,7 @@
 //! report, so after one, re-bless the whole corpus in a single step:
 //!
 //! ```text
-//! WICKRA_BLESS=1 cargo test -p benchmark-core --test golden
+//! WICKRA_BLESS=1 cargo test -p wickra-benchmark-core --test golden
 //! ```
 //!
 //! Blessing writes all four copies of a case from the same in-memory value:
@@ -26,12 +26,12 @@
 //! corpus is the property that keeps the copies from diverging. Hashes are
 //! unaffected either way: `canonicalize` sorts keys itself before hashing.
 
-use benchmark_core::{load_candles, run_case, Benchmark, BenchmarkCase, Candle, Suite};
 use serde::Serialize;
 use serde_json::Value;
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
+use wickra_benchmark_core::{load_candles, run_case, Benchmark, BenchmarkCase, Candle, Suite};
 
 fn repo_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")

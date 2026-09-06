@@ -82,7 +82,7 @@ everywhere. Each of these is cheap to break and expensive to notice later.
 - [ ] Case order in the suite file does not affect the report
 - [ ] `canonicalize` is idempotent, and its output still sorts every object key
 - [ ] The golden corpus was re-blessed with
-      `WICKRA_BLESS=1 cargo test -p benchmark-core --test golden`, not hand-edited
+      `WICKRA_BLESS=1 cargo test -p wickra-benchmark-core --test golden`, not hand-edited
 - [ ] `python scripts/check_corpus_sync.py` passes — every copy of a case
       (`cases/`, `cases/suite.json`, `golden/`, `examples/data/`) agrees
 - [ ] `python scripts/check_test_counts.py` passes — the README's `Testing`

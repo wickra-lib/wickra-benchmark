@@ -167,7 +167,7 @@ quickstarts are in each `bindings/<lang>/README.md`.
 
 | Language | Binding | Package |
 | -------- | ------- | ------- |
-| Rust | `benchmark-core` (native) | crates.io |
+| Rust | `wickra-benchmark-core` (native) | crates.io |
 | Python | PyO3 (native) | PyPI |
 | Node.js | napi (native) | npm |
 | WASM | wasm-bindgen (native) | npm |
@@ -244,7 +244,7 @@ corpus — `cases/`, `cases/suite.json`, `golden/` and `examples/data/` — from
 same value:
 
 ```bash
-WICKRA_BLESS=1 cargo test -p benchmark-core --test golden
+WICKRA_BLESS=1 cargo test -p wickra-benchmark-core --test golden
 python scripts/check_corpus_sync.py
 ```
 
@@ -253,7 +253,7 @@ python scripts/check_corpus_sync.py
 The commands are in
 [Building everything from source](#building-everything-from-source).
 
-- `benchmark-core` — 14 unit tests over case and suite validation, the CSV candle
+- `wickra-benchmark-core` — 14 unit tests over case and suite validation, the CSV candle
   loader, canonicalization and hashing. Plus five integration suites: 12
   conformance tests (determinism, ordering, the pass/fail tally), 11
   indicator-conformance tests (every frozen `expected_hash` is downstream of the

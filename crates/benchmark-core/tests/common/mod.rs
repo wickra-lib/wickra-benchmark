@@ -1,4 +1,4 @@
-//! Shared fixtures for the benchmark-core integration tests: a valid embedded
+//! Shared fixtures for the wickra-benchmark-core integration tests: a valid embedded
 //! strategy, deterministic candle universes, and a `bless` helper that turns a
 //! `(strategy, candles)` pair into a self-passing [`BenchmarkCase`] by taking
 //! the real engine's recomputed report and hash as the frozen expectation —
@@ -8,8 +8,8 @@
 //! of these helpers, so unused items in any single binary are expected.
 #![allow(dead_code)]
 
-use benchmark_core::{canonicalize, hash, BenchmarkCase, Candle, StrategySpec};
 use serde_json::{json, Value};
+use wickra_benchmark_core::{canonicalize, hash, BenchmarkCase, Candle, StrategySpec};
 
 /// The symbol the sample strategy trades.
 pub const SYMBOL: &str = "TEST";

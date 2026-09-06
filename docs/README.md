@@ -3,12 +3,12 @@
 A signpost, not a documentation tree.
 
 The site is [benchmark.wickra.org](https://benchmark.wickra.org). Rust API docs
-are on [docs.rs](https://docs.rs/benchmark-core), built with every feature on. The per-language quickstarts live in each binding's own README under
+are on [docs.rs](https://docs.rs/wickra-benchmark-core), built with every feature on. The per-language quickstarts live in each binding's own README under
 [`bindings/`](../bindings/), next to the code they describe:
 
 | | | |
 |---|---|---|
-| [Rust](https://docs.rs/benchmark-core) | [Python](../bindings/python/README.md) | [Node.js](../bindings/node/README.md) |
+| [Rust](https://docs.rs/wickra-benchmark-core) | [Python](../bindings/python/README.md) | [Node.js](../bindings/node/README.md) |
 | [WebAssembly](../bindings/wasm/README.md) | [C and C++](../bindings/c/README.md) | [C#](../bindings/csharp/README.md) |
 | [Go](../bindings/go/README.md) | [Java](../bindings/java/README.md) | [R](../bindings/r/README.md) |
 

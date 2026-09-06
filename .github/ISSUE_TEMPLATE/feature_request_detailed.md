@@ -19,7 +19,7 @@ mind -- the best fix is often not the one that comes to mind first.
 
 ## Affected area
 
-- [ ] `benchmark-core` (the runner, the case/suite types)
+- [ ] `wickra-benchmark-core` (the runner, the case/suite types)
 - [ ] The `command_json` boundary (a new `cmd`, or a new field on one)
 - [ ] Canonicalization or hashing
 - [ ] The curated corpus (`cases/`, `datasets/`)

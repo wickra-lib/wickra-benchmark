@@ -1,9 +1,9 @@
 //! Load cases and datasets, run them, and render the result.
 
 use crate::args::{Cli, Command, Format};
-use benchmark_core::{load_candles, run_case, run_suite, BenchmarkCase, CaseResult, Suite};
 use std::fmt::Write as _;
 use std::path::Path;
+use wickra_benchmark_core::{load_candles, run_case, run_suite, BenchmarkCase, CaseResult, Suite};
 
 /// The rendered output and the process exit code (`0` = all passed).
 pub struct Output {

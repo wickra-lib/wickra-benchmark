@@ -12,7 +12,7 @@
 
 use wasm_bindgen::prelude::*;
 
-use benchmark_core::Benchmark as CoreBenchmark;
+use wickra_benchmark_core::Benchmark as CoreBenchmark;
 
 /// A benchmark runner driven by JSON commands.
 #[wasm_bindgen]

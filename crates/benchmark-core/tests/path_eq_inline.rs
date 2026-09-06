@@ -3,9 +3,9 @@
 //! the same data. This pins the promise that the CLI and every binding agree,
 //! regardless of whether the datasets came off disk or over the wire.
 
-use benchmark_core::{load_candles, run_suite, run_suite_inline, Candle, Suite};
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
+use wickra_benchmark_core::{load_candles, run_suite, run_suite_inline, Candle, Suite};
 
 fn repo_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")

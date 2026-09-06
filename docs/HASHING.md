@@ -38,7 +38,7 @@ which includes these hashes.
 ## Relationship to wickra-proof
 
 The canonicalization here is the same determinism moat as `wickra-proof`'s: a
-report's canonical hash under benchmark-core equals its hash under wickra-proof.
+report's canonical hash under wickra-benchmark-core equals its hash under wickra-proof.
 That is what lets a benchmark case and a proof over the same report agree — the
 two products share one hashing contract rather than each inventing its own.
 

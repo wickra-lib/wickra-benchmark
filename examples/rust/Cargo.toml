@@ -15,4 +15,4 @@ name = "run"
 path = "src/main.rs"
 
 [dependencies]
-benchmark-core = { workspace = true }
+wickra-benchmark-core = { workspace = true }

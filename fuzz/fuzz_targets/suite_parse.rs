@@ -3,7 +3,7 @@
 //! both JSON and TOML. None must panic; malformed input (including duplicate
 //! case ids) must surface as a clean `Err`, never a crash.
 
-use benchmark_core::Suite;
+use wickra_benchmark_core::Suite;
 use libfuzzer_sys::fuzz_target;
 
 fuzz_target!(|data: &[u8]| {

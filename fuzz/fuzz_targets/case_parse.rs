@@ -3,7 +3,7 @@
 //! `BenchmarkCase` from both JSON and TOML. None must panic; malformed input
 //! must surface as a clean `Err`, never a crash.
 
-use benchmark_core::BenchmarkCase;
+use wickra_benchmark_core::BenchmarkCase;
 use libfuzzer_sys::fuzz_target;
 
 fuzz_target!(|data: &[u8]| {
