@@ -6,6 +6,26 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-09-06
+
+A release-process fix. 0.1.0 reached every registry but never produced a GitHub
+release, because the step that attaches the assets waits on every publish job and
+one of them failed after the packages were already live.
+
+### Fixed
+
+- The SBOM step copied `crates/wickra-benchmark-cli/wickra-benchmark-cli.cdx.json`,
+  a directory that has never existed: `cargo-cyclonedx` writes
+  `<package>.cdx.json` inside the crate's own directory, and here the directories
+  are short (`benchmark-cli`) while the packages are prefixed
+  (`wickra-benchmark-cli`). The line had been wrong since it was written and
+  could not show, because the publish above it failed first on every attempt this
+  repository ever made — first on a token that did not cover `benchmark-core`,
+  and only once that was resolved did control reach this line. The copy now names
+  the real directory, and the step asserts both published crates are represented
+  rather than shipping a release that attests less than it claims.
+
+
 ## [0.1.0] - 2026-09-06
 
 ### Added
@@ -364,5 +384,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `webpki-roots` for a TLS stack this crate does not have — it is not in the
   dependency graph at all.
 
-[Unreleased]: https://github.com/wickra-lib/wickra-benchmark/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra-benchmark/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/wickra-lib/wickra-benchmark/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/wickra-lib/wickra-benchmark/releases/tag/v0.1.0
