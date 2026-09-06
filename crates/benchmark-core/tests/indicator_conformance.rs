@@ -2,7 +2,7 @@
 //!
 //! Nothing here computes indicators. The recompute path goes
 //! `run_case` -> `wickra-backtest-core` -> its own registry, which resolves a
-//! strategy's indicator names internally; `benchmark-core` never sees an
+//! strategy's indicator names internally; `wickra-benchmark-core` never sees an
 //! `Indicator`. But every frozen `expected_hash` in `cases/` is downstream of
 //! this arithmetic, so when a hash moves after a dependency bump there are two
 //! candidates and no way to tell them apart from the report alone:

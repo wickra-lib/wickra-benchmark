@@ -2,7 +2,7 @@
 # A reproducible, golden-verified benchmark suite for quant backtests: a curated,
 # hash-pinned collection of (strategy, dataset, expected report) cases that anyone
 # recomputes in ten languages and confirms byte-for-byte. The core
-# (`benchmark-core`) recomputes a case's report with the pinned wickra-backtest
+# (`wickra-benchmark-core`) recomputes a case's report with the pinned wickra-backtest
 # engine, hashes it with the same canonicalization wickra-proof uses, and compares
 # against the frozen expectation. It is exposed as a JSON-over-C-ABI data API in
 # ten languages: a Rust core with native Python/Node/WASM bindings plus a C ABI
@@ -49,7 +49,7 @@ categories = ["finance", "command-line-utilities"]
 # commit.
 wickra-backtest-core = "0.1.4"
 # Workspace-internal core, referenced by the CLI, bench and bindings.
-benchmark-core = { version = "0.1.0", path = "crates/benchmark-core" }
+wickra-benchmark-core = { version = "0.1.0", path = "crates/benchmark-core" }
 # The indicator core, underneath the engine. Not called on the recompute path --
 # the engine resolves a strategy's indicator names itself -- but the corpus's
 # hashes depend on these indicators' arithmetic, so tests/indicator_conformance.rs

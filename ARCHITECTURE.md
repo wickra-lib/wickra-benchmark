@@ -10,7 +10,7 @@ that canonicalizer, and compares against the frozen expectation.
 
 ```
 crates/
-  benchmark-core        core: BenchmarkCase / Suite / CaseResult / SuiteReport,
+  wickra-benchmark-core        core: BenchmarkCase / Suite / CaseResult / SuiteReport,
                         run_case / run_suite / run_suite_inline, command_json
   wickra-benchmark-cli  reference CLI: run-case / run-suite / list-cases
   benchmark-bench       criterion benches

@@ -16,7 +16,7 @@
 use napi::Result;
 use napi_derive::napi;
 
-use benchmark_core::Benchmark as CoreBenchmark;
+use wickra_benchmark_core::Benchmark as CoreBenchmark;
 
 /// Build a napi error from a message.
 fn err(message: impl Into<String>) -> napi::Error {

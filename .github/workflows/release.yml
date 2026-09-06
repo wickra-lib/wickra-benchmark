@@ -27,7 +27,7 @@ env:
 
 jobs:
   # --------------------------------------------------------------------------
-  # crates.io: benchmark-core then the wickra-benchmark-cli crate (wickra-benchmark binary)
+  # crates.io: wickra-benchmark-core then the wickra-benchmark-cli crate (wickra-benchmark binary)
   # --------------------------------------------------------------------------
   # --------------------------------------------------------------------------
   # The cut between building and publishing. Everything above it is repeatable;
@@ -132,9 +132,9 @@ jobs:
 
       # Idempotent publishing: if the version is already on crates.io we treat
       # that as success so re-runs of the workflow do not fail.
-      - name: Publish benchmark-core (idempotent)
+      - name: Publish wickra-benchmark-core (idempotent)
         run: |
-          if out=$(cargo publish -p benchmark-core --token "$CARGO_REGISTRY_TOKEN" 2>&1); then
+          if out=$(cargo publish -p wickra-benchmark-core --token "$CARGO_REGISTRY_TOKEN" 2>&1); then
             echo "$out"
           elif echo "$out" | grep -q "already uploaded\|already exists"; then
             echo "skip: already published"
@@ -164,7 +164,7 @@ jobs:
       # Produce .crate files for the GitHub Release attachments.
       - name: Build .crate files for release attachment
         run: |
-          cargo package -p benchmark-core
+          cargo package -p wickra-benchmark-core
           cargo package -p wickra-benchmark-cli
 
       - name: Upload .crate files
@@ -183,7 +183,7 @@ jobs:
         run: |
           cargo cyclonedx --format json --top-level
           mkdir -p sboms
-          cp crates/benchmark-core/benchmark-core.cdx.json sboms/
+          cp crates/benchmark-core/wickra-benchmark-core.cdx.json sboms/
           cp crates/wickra-benchmark-cli/wickra-benchmark-cli.cdx.json sboms/
           ls -lh sboms/
 
@@ -222,7 +222,7 @@ jobs:
       - name: Sync root README into bindings/python so it ships with the wheel
         shell: bash
         run: cp README.md bindings/python/README.md
-      # The Python binding depends only on benchmark-core (pure canonicalization +
+      # The Python binding depends only on wickra-benchmark-core (pure canonicalization +
       # hashing, no native networking), so the manylinux/musllinux containers
       # build the wheel with no extra system dependencies.
       - uses: PyO3/maturin-action@e83996d129638aa358a18fbd1dfb82f0b0fb5d3b # v1.51.0
@@ -740,7 +740,18 @@ jobs:
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
           CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run: mvn -B -f bindings/java -Prelease deploy -DskipTests
+        # Idempotent, like crates.io and npm above: Central rejects a version
+        # it already holds, and a re-run after a partial release would
+        # otherwise fail on work that is already done.
+        run: |
+          if out=$(mvn -B -f bindings/java -Prelease deploy -DskipTests 2>&1); then
+            echo "$out"
+          elif echo "$out" | grep -qi "already exists\|already been released\|409 Conflict\|duplicate"; then
+            echo "skip: already on Maven Central"
+          else
+            echo "$out"
+            exit 1
+          fi
       # Maven Central gets the jar from the deploy above; the GitHub release page
       # only gets what is uploaded as an artifact and then staged. Without this
       # the jar was the one published artefact with no copy on the release.
@@ -849,8 +860,14 @@ jobs:
             git -c commit.gpgsign=false commit -q -m "Release v$version"
           fi
           git push origin HEAD:refs/heads/main
-          git tag "v$version"
-          git push origin "v$version"
+          # Idempotent: the tag survives a partial release, so a re-run must not
+          # fail on creating one that is already there.
+          if git ls-remote --exit-code --tags origin "refs/tags/v$version" >/dev/null 2>&1; then
+            echo "skip: wickra-benchmark-go already tagged v$version"
+          else
+            git tag "v$version"
+            git push origin "v$version"
+          fi
 
   # --------------------------------------------------------------------------
   # GitHub Release: create a DRAFT, attach every built artefact, then publish-

@@ -19,7 +19,7 @@ exclude = [
   # The link is right and resolves from the first release onwards; until then it
   # is a 404 that would make this job permanently red and therefore ignored.
   # Remove this entry with the first tag.
-  "^https://docs\\.rs/benchmark-core",
+  "^https://docs\\.rs/wickra-benchmark-core",
     "^https?://localhost",
     "^https?://127\\.0\\.0\\.1",
     "example\\.com",

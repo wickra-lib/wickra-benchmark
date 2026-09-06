@@ -205,7 +205,7 @@ jobs:
         shell: bash
         run: |
           published=""
-          for crate in benchmark-core benchmark-cli; do
+          for crate in wickra-benchmark-core benchmark-cli; do
             if curl -fsSL "https://crates.io/api/v1/crates/$crate" \
                  -H 'User-Agent: wickra-benchmark-ci' >/dev/null 2>&1; then
               published="$published -p $crate"
@@ -228,7 +228,7 @@ jobs:
   #
   # The failure this catches elsewhere in the family is a native dependency the
   # container lacks (vendored OpenSSL, perl-core). That one cannot happen here:
-  # the binding depends only on benchmark-core, and openssl-sys and native-tls
+  # the binding depends only on wickra-benchmark-core, and openssl-sys and native-tls
   # appear nowhere in Cargo.lock. What remains is worth proving anyway — that the
   # wheel builds in both containers and that the module it produces actually
   # imports under musl, which is a different libc, not a different flag.
@@ -328,12 +328,12 @@ jobs:
         uses: taiki-e/install-action@742a3317eac7bd62f91cd888b4eead5e784ba833 # v2.87.1
         with:
           tool: cargo-llvm-cov
-      # The moat lives in benchmark-core: recompute + canonicalization + hashing.
+      # The moat lives in wickra-benchmark-core: recompute + canonicalization + hashing.
       # Measure it in isolation so patch coverage tracks the core.
       - name: Generate coverage (lcov)
         run: >
           cargo llvm-cov
-          -p benchmark-core
+          -p wickra-benchmark-core
           --lcov --output-path lcov.info
       - name: Upload to Codecov
         uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0

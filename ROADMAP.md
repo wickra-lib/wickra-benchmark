@@ -7,7 +7,7 @@ same structure, the same tests / fuzz / golden / examples / bindings / CI.
 ## Pre-1.0 (0.1.x)
 
 - [x] Repository scaffold, governance, supply-chain and licensing baseline.
-- [x] `benchmark-core`: `BenchmarkCase`, `Suite`, `CaseResult`, `SuiteReport`,
+- [x] `wickra-benchmark-core`: `BenchmarkCase`, `Suite`, `CaseResult`, `SuiteReport`,
       canonical blake3 hashing, the `run_case` / `run_suite` runner, and the
       `command_json` boundary.
 - [x] Reference CLI (`wickra-benchmark`): `run-case`, `run-suite`, `list-cases`,

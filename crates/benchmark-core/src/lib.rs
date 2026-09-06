@@ -1,4 +1,4 @@
-//! # benchmark-core
+//! # wickra-benchmark-core
 //!
 //! The deterministic core of `wickra-benchmark`: a curated suite of
 //! `(strategy, dataset, expected report, hash)` cases you recompute and confirm
@@ -33,7 +33,7 @@ pub use hash::{canonicalize, hash, hash_report};
 pub use runner::{load_candles, run_case, run_suite, run_suite_inline};
 pub use suite::{CaseResult, Suite, SuiteReport};
 
-/// The benchmark-core crate version.
+/// The wickra-benchmark-core crate version.
 #[must_use]
 pub fn version() -> &'static str {
     env!("CARGO_PKG_VERSION")

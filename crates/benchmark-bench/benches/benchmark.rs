@@ -8,10 +8,10 @@
 //! parallel (rayon) one; the reports are byte-identical, so the delta is pure
 //! scheduling.
 
-use benchmark_core::{canonicalize, hash, run_suite_inline, BenchmarkCase, Candle, Suite};
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use serde_json::{json, Value};
 use std::collections::BTreeMap;
+use wickra_benchmark_core::{canonicalize, hash, run_suite_inline, BenchmarkCase, Candle, Suite};
 
 fn strategy() -> Value {
     json!({

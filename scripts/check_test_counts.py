@@ -6,7 +6,7 @@ only description a reader gets of how much each binding is actually held to.
 They drift silently: adding a test does not touch the README, and no build step
 compares the two. It has already happened twice. A batch-equivalence test went
 into eight bindings and left six of the numbers stale, and an indicator
-conformance suite was added while the README went on saying `benchmark-core` has
+conformance suite was added while the README went on saying `wickra-benchmark-core` has
 four integration suites.
 
 So each surface is counted from its sources and matched against the sentence that
@@ -67,8 +67,8 @@ JS = r"^\s*test\("
 # across lines in the source.
 def surfaces() -> list[tuple[str, int, str]]:
     return [
-        ("benchmark-core units", count(RUST, "crates/benchmark-core/src/**/*.rs"),
-         r"`benchmark-core` — {n} unit tests"),
+        ("wickra-benchmark-core units", count(RUST, "crates/benchmark-core/src/**/*.rs"),
+         r"`wickra-benchmark-core` — {n} unit tests"),
         ("integration suites", files("crates/benchmark-core/tests/*.rs"),
          r"Plus {n} integration suites"),
         ("conformance", count(RUST, "crates/benchmark-core/tests/conformance.rs"),

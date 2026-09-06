@@ -27,7 +27,7 @@ Structural invariants (enforced by `BenchmarkCase::validate`, source
 - `strategy` and `expected` are both JSON objects.
 - Unknown top-level keys are rejected (`deny_unknown_fields`).
 
-`strategy` is kept as raw JSON (not a typed struct) so benchmark-core stays
+`strategy` is kept as raw JSON (not a typed struct) so wickra-benchmark-core stays
 decoupled from the engine's internals across the FFI boundary; it is deserialized
 into a `wickra_backtest_core::StrategySpec` only when the case runs.
 

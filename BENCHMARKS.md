@@ -1,6 +1,6 @@
 # Benchmarks
 
-Micro-benchmarks for `benchmark-core`, measured with
+Micro-benchmarks for `wickra-benchmark-core`, measured with
 [criterion](https://github.com/bheisler/criterion.rs) via the `benchmark-bench`
 crate:
 

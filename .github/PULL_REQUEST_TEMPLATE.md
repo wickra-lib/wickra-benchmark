@@ -22,7 +22,7 @@ https://github.com/wickra-lib/wickra-benchmark/compare/main...HEAD?template=deta
 - [ ] `cargo deny check` is clean
 - [ ] Tests added/updated (prefer hand-computed expectations for core changes)
 - [ ] `python scripts/check_test_counts.py` passes — a test you added is reflected in the README's `Testing` counts
-- [ ] The corpus was re-blessed with `WICKRA_BLESS=1 cargo test -p benchmark-core --test golden`, never hand-edited
+- [ ] The corpus was re-blessed with `WICKRA_BLESS=1 cargo test -p wickra-benchmark-core --test golden`, never hand-edited
 - [ ] `python scripts/check_corpus_sync.py` passes — every copy of a case agrees
 - [ ] Binding surface mirrored across languages; golden fixtures regenerated if the envelope changed
 - [ ] `CHANGELOG.md` updated under `[Unreleased]`

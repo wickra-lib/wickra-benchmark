@@ -42,7 +42,7 @@ impl Benchmark {
         Self
     }
 
-    /// The benchmark-core crate version.
+    /// The wickra-benchmark-core crate version.
     #[must_use]
     pub fn version() -> &'static str {
         env!("CARGO_PKG_VERSION")

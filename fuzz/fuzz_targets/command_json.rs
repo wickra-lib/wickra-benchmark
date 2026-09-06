@@ -5,7 +5,7 @@
 //! as a canonical `{"ok":false,...}` (or an `Err`), never a crash. When it does
 //! return a response, it must be re-parseable canonical JSON.
 
-use benchmark_core::{canonicalize, Benchmark};
+use wickra_benchmark_core::{canonicalize, Benchmark};
 use libfuzzer_sys::fuzz_target;
 use serde_json::Value;
 

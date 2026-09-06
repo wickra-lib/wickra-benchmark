@@ -27,7 +27,7 @@ use core::ffi::{c_char, CStr};
 use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::ptr;
 
-use benchmark_core::Benchmark;
+use wickra_benchmark_core::Benchmark;
 
 /// A required pointer argument (`handle` or `cmd_json`) was null.
 pub const WICKRA_BENCHMARK_ERR_NULL: i32 = -1;

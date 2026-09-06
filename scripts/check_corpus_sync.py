@@ -15,7 +15,7 @@ merged.
 
 This is the guard for that. It compares the copies rather than recomputing them,
 so it stays fast and needs no engine: blessing
-(`WICKRA_BLESS=1 cargo test -p benchmark-core --test golden`) is what produces
+(`WICKRA_BLESS=1 cargo test -p wickra-benchmark-core --test golden`) is what produces
 the bytes, and this only asserts they all agree.
 
 Exits non-zero on the first divergence, naming both sides.
@@ -148,7 +148,7 @@ def report() -> int:
             print(f"  - {problem}", file=sys.stderr)
         print(
             "\nRe-bless the corpus, which writes every copy from one value:\n"
-            "  WICKRA_BLESS=1 cargo test -p benchmark-core --test golden",
+            "  WICKRA_BLESS=1 cargo test -p wickra-benchmark-core --test golden",
             file=sys.stderr,
         )
         return 1

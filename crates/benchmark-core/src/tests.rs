@@ -1,4 +1,4 @@
-//! Inline tests for benchmark-core: case/suite validation, the honest and
+//! Inline tests for wickra-benchmark-core: case/suite validation, the honest and
 //! fudged run-case outcomes, deterministic suite sorting, the path-equals-inline
 //! guarantee, canonicalization stability, and the command-JSON boundary.
 

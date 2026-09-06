@@ -5,10 +5,10 @@
 
 mod common;
 
-use benchmark_core::{canonicalize, run_suite_inline, BenchmarkCase, Candle, Suite};
 use proptest::prelude::*;
 use serde_json::{json, Value};
 use std::collections::BTreeMap;
+use wickra_benchmark_core::{canonicalize, run_suite_inline, BenchmarkCase, Candle, Suite};
 
 /// Build a suite of `n` blessed cases over independently-shaped universes, with
 /// unique ids (so the suite validates) and one dataset per case.

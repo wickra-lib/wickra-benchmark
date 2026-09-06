@@ -7,7 +7,7 @@
 
 mod common;
 
-use benchmark_core::{canonicalize, BenchmarkCase, CaseResult, Suite, SuiteReport};
+use wickra_benchmark_core::{canonicalize, BenchmarkCase, CaseResult, Suite, SuiteReport};
 
 #[test]
 fn case_json_round_trips() {
@@ -19,7 +19,7 @@ fn case_json_round_trips() {
 
 #[test]
 fn strategy_value_passes_through_untouched() {
-    // benchmark-core keeps `strategy` as raw JSON; a round-trip must not perturb
+    // wickra-benchmark-core keeps `strategy` as raw JSON; a round-trip must not perturb
     // it (no key reordering that would matter, no numeric coercion).
     let case = common::sample_case();
     let original = case.strategy.clone();

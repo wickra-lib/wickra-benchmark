@@ -13,7 +13,7 @@
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 
-use benchmark_core::Benchmark;
+use wickra_benchmark_core::Benchmark;
 
 /// A benchmark runner driven by JSON commands.
 #[pyclass(name = "Benchmark")]
