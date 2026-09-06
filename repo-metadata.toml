@@ -5,6 +5,7 @@
 org          = "wickra-lib"
 name         = "wickra-benchmark"
 url          = "https://github.com/wickra-lib/wickra-benchmark"
+docs_url     = "https://benchmark.wickra.org"
 homepage     = "https://wickra.org"
 issues_url   = "https://github.com/wickra-lib/wickra-benchmark/issues"
 security_url = "https://github.com/wickra-lib/wickra-benchmark/security/advisories/new"

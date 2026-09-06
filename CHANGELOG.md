@@ -8,6 +8,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- The repository points at [benchmark.wickra.org](https://benchmark.wickra.org),
+  which now resolves: the Docs badge, a first entry under `Documentation`, the
+  `docs/` signpost, and `docs_url` in `repo-metadata.toml`, which had none. Until
+  the host existed, naming it would have been a link to nothing.
+
 - The case registry grows from five cases to **fifteen**, over ten deterministic
   datasets instead of five, closing the roadmap item that said five cases of
   60-80 bars was enough to prove the machinery reproduces and not enough to call
