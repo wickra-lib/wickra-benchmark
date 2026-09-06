@@ -193,7 +193,7 @@ jobs:
           cp crates/benchmark-cli/wickra-benchmark-cli.cdx.json sboms/
           # Both published crates must be represented; a silent partial SBOM set
           # would ship a release attesting less than it claims.
-          test "$(ls sboms/*.cdx.json | wc -l)" -eq 2
+          test "$(find sboms -name '*.cdx.json' | wc -l)" -eq 2
           ls -lh sboms/
 
       - name: Upload SBOMs
