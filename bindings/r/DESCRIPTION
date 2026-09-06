@@ -1,7 +1,7 @@
 Package: wickrabenchmark
 Type: Package
 Title: Reproducible Quant-Research Benchmark
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: person("kingchenc", role = c("aut", "cre"), email = "support@wickra.org")
 Description: R bindings for wickra-benchmark over its C ABI hub: create a
     benchmark runner, recompute a curated case or suite with the deterministic

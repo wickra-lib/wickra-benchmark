@@ -29,7 +29,7 @@ members = [
 exclude = ["fuzz"]
 
 [workspace.package]
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 rust-version = "1.86"
 license = "MIT OR Apache-2.0"
@@ -49,7 +49,7 @@ categories = ["finance", "command-line-utilities"]
 # commit.
 wickra-backtest-core = "0.1.4"
 # Workspace-internal core, referenced by the CLI, bench and bindings.
-wickra-benchmark-core = { version = "0.1.0", path = "crates/benchmark-core" }
+wickra-benchmark-core = { version = "0.1.1", path = "crates/benchmark-core" }
 # The indicator core, underneath the engine. Not called on the recompute path --
 # the engine resolves a strategy's indicator names itself -- but the corpus's
 # hashes depend on these indicators' arithmetic, so tests/indicator_conformance.rs

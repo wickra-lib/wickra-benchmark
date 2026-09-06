@@ -96,7 +96,7 @@ checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
 
 [[package]]
 name = "benchmark-bench"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "codspeed-criterion-compat",
  "serde_json",
@@ -1355,14 +1355,14 @@ dependencies = [
 
 [[package]]
 name = "wickra-benchmark-c"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "wickra-benchmark-core",
 ]
 
 [[package]]
 name = "wickra-benchmark-cli"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "clap",
  "serde_json",
@@ -1371,7 +1371,7 @@ dependencies = [
 
 [[package]]
 name = "wickra-benchmark-core"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "blake3",
  "proptest",
@@ -1386,14 +1386,14 @@ dependencies = [
 
 [[package]]
 name = "wickra-benchmark-example"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "wickra-benchmark-core",
 ]
 
 [[package]]
 name = "wickra-benchmark-node"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "napi",
  "napi-build",
@@ -1403,7 +1403,7 @@ dependencies = [
 
 [[package]]
 name = "wickra-benchmark-python"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "pyo3",
  "wickra-benchmark-core",
@@ -1411,7 +1411,7 @@ dependencies = [
 
 [[package]]
 name = "wickra-benchmark-wasm"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "wasm-bindgen",
  "wickra-benchmark-core",

@@ -183,8 +183,17 @@ jobs:
         run: |
           cargo cyclonedx --format json --top-level
           mkdir -p sboms
+          # cargo-cyclonedx writes <package>.cdx.json inside the crate's own
+          # directory, and here the two differ: directories are short
+          # (benchmark-cli), packages are prefixed (wickra-benchmark-cli). The
+          # cli line used the package name as the directory, which has never
+          # existed -- invisible until now, because the publish above it failed
+          # first on every attempt.
           cp crates/benchmark-core/wickra-benchmark-core.cdx.json sboms/
-          cp crates/wickra-benchmark-cli/wickra-benchmark-cli.cdx.json sboms/
+          cp crates/benchmark-cli/wickra-benchmark-cli.cdx.json sboms/
+          # Both published crates must be represented; a silent partial SBOM set
+          # would ship a release attesting less than it claims.
+          test "$(find sboms -name '*.cdx.json' | wc -l)" -eq 2
           ls -lh sboms/
 
       - name: Upload SBOMs

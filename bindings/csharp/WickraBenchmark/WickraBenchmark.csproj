@@ -17,7 +17,7 @@
     <AssemblyName>Wickra.Benchmark</AssemblyName>
 
     <PackageId>Wickra.Benchmark</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <Authors>kingchenc</Authors>
     <Description>A reproducible, golden-verified benchmark suite for quant backtests, for .NET over the Wickra C ABI: recompute a curated case or suite with the deterministic Wickra engine and confirm its report and hash.</Description>
     <PackageLicenseExpression>MIT OR Apache-2.0</PackageLicenseExpression>
