@@ -2,8 +2,8 @@
 
 A signpost, not a documentation tree.
 
-Rust API docs are on [docs.rs](https://docs.rs/benchmark-core), built with every
-feature on. The per-language quickstarts live in each binding's own README under
+The site is [benchmark.wickra.org](https://benchmark.wickra.org). Rust API docs
+are on [docs.rs](https://docs.rs/benchmark-core), built with every feature on. The per-language quickstarts live in each binding's own README under
 [`bindings/`](../bindings/), next to the code they describe:
 
 | | | |

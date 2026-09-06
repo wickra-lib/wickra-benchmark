@@ -19,7 +19,7 @@
 [![OpenSSF Scorecard](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/scorecard.svg)](https://scorecard.dev/viewer/?uri=github.com/wickra-lib/wickra-benchmark)
 [![OpenSSF Best Practices](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/best-practices.svg)](https://www.bestpractices.dev)
 [![Build provenance](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/provenance.svg)](https://github.com/wickra-lib/wickra-benchmark/attestations)
-[![Docs](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/docs.svg)](https://wickra.org)
+[![Docs](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/docs.svg)](https://benchmark.wickra.org)
 [![Verified across 10 languages](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/verified.svg)](golden/)
 [![Reproduced across 10 languages](https://img.shields.io/badge/reproduced%20across-10%20languages-3b82f6)](#reproduce-the-suite-in-any-language)
 
@@ -106,6 +106,8 @@ yet on the registries. Track progress in [ROADMAP.md](ROADMAP.md).
 
 ## Documentation
 
+- [benchmark.wickra.org](https://benchmark.wickra.org) — the site: what the
+  suite is, the case registry, and the per-language quickstarts.
 - [`ARCHITECTURE.md`](ARCHITECTURE.md) — how the pieces fit together.
 - [`docs/CASES.md`](docs/CASES.md) — the `BenchmarkCase`/`Suite` schema and how
   to contribute a case.

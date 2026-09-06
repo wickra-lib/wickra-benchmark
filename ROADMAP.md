@@ -30,9 +30,9 @@ same structure, the same tests / fuzz / golden / examples / bindings / CI.
       a two-condition `all`.
 - [x] A `wickra-benchmark-site` repository, at
       [wickra-benchmark-site](https://github.com/wickra-lib/wickra-benchmark-site).
-- [ ] Point `benchmark.wickra.org` at it: the DNS record and the Cloudflare Pages
-      project. Until both exist the site builds and serves nothing, so nothing
-      here links to that host.
+- [x] Point `benchmark.wickra.org` at it: the DNS record and the Cloudflare Pages
+      project. Both exist, the host serves, and the README, the docs signpost and
+      `repo-metadata.toml` link it.
 - [x] An entry in `wickra-lib.r-universe.dev/packages.json`. The registry tracks
       `*release`, so it builds nothing until the first tag -- which is the point:
       the entry has to exist before the tag, not after it.
