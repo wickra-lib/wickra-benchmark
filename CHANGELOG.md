@@ -6,6 +6,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-09-13
+
 ### Fixed
 
 - **The R package builds for WebAssembly on r-universe.** `configure`
@@ -402,6 +404,7 @@ one of them failed after the packages were already live.
   `webpki-roots` for a TLS stack this crate does not have — it is not in the
   dependency graph at all.
 
-[Unreleased]: https://github.com/wickra-lib/wickra-benchmark/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra-benchmark/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/wickra-lib/wickra-benchmark/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/wickra-lib/wickra-benchmark/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/wickra-lib/wickra-benchmark/releases/tag/v0.1.0
