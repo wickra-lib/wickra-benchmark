@@ -43,7 +43,7 @@ Everything goes through a `Benchmark` driven by JSON commands — the same comma
 protocol every Wickra binding shares.
 
 ```js
-import init, { Benchmark } from "./pkg/wickra_benchmark_wasm.js";
+import init, { Benchmark } from "wickra-benchmark-wasm";
 
 await init(); // load the .wasm module (web target)
 

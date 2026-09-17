@@ -25,12 +25,23 @@ A static library (`libwickra_benchmark.a` / `wickra_benchmark.lib`) is emitted a
 
 ## Build and run the examples
 
-With CMake, as the CI C ABI job does:
+### With CMake (portable, used by CI)
 
 ```sh
 cmake -S examples/c -B examples/c/build
 cmake --build examples/c/build --config Release
 ctest --test-dir examples/c/build -C Release --output-on-failure
+```
+
+### Directly with a compiler
+
+```sh
+# Linux / macOS
+cc examples/c/run.c -DDATA_DIR=\"examples/data\" -I bindings/c/include -L target/release -lwickra_benchmark -lm -o run
+LD_LIBRARY_PATH=target/release ./run        # macOS: DYLD_LIBRARY_PATH
+
+# Windows (MinGW gcc, linking the DLL directly)
+gcc examples/c/run.c -DDATA_DIR=\"examples/data\" -I bindings/c/include target/release/wickra_benchmark.dll -lm -o run.exe
 ```
 
 ## The examples
