@@ -6,6 +6,23 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- **wickra-backtest-core 0.1.6, pinned exactly.** The caret `0.1.4` that
+  `cargo update` could have moved and nobody did now names the release the
+  family is on with the `=` every sibling uses; the lock follows and the corpus
+  is re-blessed (`golden/expected/version.json` carries `engine_version`
+  0.1.6; every report is byte-identical, the engine's numbers did not change).
+  The comment that pointed at a `golden/bless.py` names the real command. A
+  cross-repo scan lined the 24 wickra-lib repositories up, and the rest is what
+  this one spelled differently: `wickra-core = "1.0"` as the family writes it,
+  `LangVersion latest` in the C# projects (was 12.0), the Maven compiler and
+  surefire plugins one line behind (3.16.0 / 3.6.0), `@napi-rs/cli` ^3.9.0
+  (was ^3.8.6), the C example's `CMAKE_CXX_STANDARD` 17, a `go 1.23` /
+  `release 22` floor row on ubuntu beside the stable / 25 binding jobs, the
+  family's pinned `nightly-2026-07-01` for the fuzz job, and `dotnet-version:
+  "8.0.x"`.
+
 ## [0.1.2] - 2026-09-13
 
 ### Fixed

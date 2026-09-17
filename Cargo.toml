@@ -45,9 +45,9 @@ categories = ["finance", "command-line-utilities"]
 # with it and compared. Consumed from crates.io since its 0.1.2 release, so this
 # workspace is publishable (crates.io refuses a crate with a git dependency). Its
 # version() is the engine the expected report is bound to, so bumping it re-shapes
-# every frozen report — re-bless the corpus with `golden/bless.py` in the same
-# commit.
-wickra-backtest-core = "0.1.4"
+# every frozen report — re-bless the corpus in the same commit:
+#   WICKRA_BLESS=1 cargo test -p wickra-benchmark-core --test golden
+wickra-backtest-core = "=0.1.6"
 # Workspace-internal core, referenced by the CLI, bench and bindings.
 wickra-benchmark-core = { version = "0.1.2", path = "crates/benchmark-core" }
 # The indicator core, underneath the engine. Not called on the recompute path --
@@ -56,7 +56,7 @@ wickra-benchmark-core = { version = "0.1.2", path = "crates/benchmark-core" }
 # pins the behaviour of the four families the cases actually name. When a hash
 # moves after a dependency bump, that test answers "engine or indicator?" before
 # anyone diffs a report.
-wickra-core = "1.0.4"
+wickra-core = "1.0"
 # Serialization — the data-driven boundary (case/suite/report/command as JSON).
 serde = { version = "1", features = ["derive"] }
 # `float_roundtrip` makes serde_json's float parser correctly rounded: a float
