@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://wickra.org"><img src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/wickra-banner.webp?v=514" alt="Wickra Benchmark — a reproducible, golden-verified benchmark suite for quant backtests, recomputable byte-for-byte in ten languages" width="100%"></a>
+  <a href="https://wickra.org"><img src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/wickra-banner.webp?v=514-7" alt="Wickra Benchmark — a reproducible, golden-verified benchmark suite for quant backtests, recomputable byte-for-byte in ten languages" width="100%"></a>
 </p>
 
 [![Built on Wickra](https://img.shields.io/badge/built%20on-wickra-3b82f6)](https://github.com/wickra-lib/wickra)
@@ -25,18 +25,20 @@
 
 ---
 
-# Wickra Benchmark
-
 **A reproducible, golden-verified benchmark suite for quant backtests. Take a
 curated `(strategy, dataset, expected report)` case, recompute it, and confirm it
 reproduces byte-for-byte — the same result in ten languages, or the build goes
 red.**
 
-> **Part of the [Wickra ecosystem](https://github.com/wickra-lib).** Built on the
-> same deterministic backtest engine and ten-language binding surface as
-> [wickra-backtest](https://github.com/wickra-lib/wickra-backtest),
-> [wickra-proof](https://github.com/wickra-lib/wickra-proof),
-> [wickra-verify](https://github.com/wickra-lib/wickra-verify) and the rest.
+> **▶ Live demos:** the backtester compiled to WebAssembly, an equity curve building bar by bar — **[backtest-live.wickra.org](https://backtest-live.wickra.org)**;
+> one StrategySpec side by side in Python, Rust, JS and Go — **[playground.wickra.org](https://playground.wickra.org)**;
+> all 514 indicators of the core over a real Binance feed — **[live.wickra.org](https://live.wickra.org)**. Zero backend, all of them.
+
+**Part of the [Wickra ecosystem](https://github.com/wickra-lib).** Built on the
+same deterministic backtest engine and ten-language binding surface as
+[wickra-backtest](https://github.com/wickra-lib/wickra-backtest),
+[wickra-proof](https://github.com/wickra-lib/wickra-proof),
+[wickra-verify](https://github.com/wickra-lib/wickra-verify) and the rest.
 
 `wickra-benchmark` is the "ImageNet for trading-strategy reproducibility": not a
 new backtest engine, but the curated, hash-pinned **suite** you check an engine
@@ -79,30 +81,13 @@ wma-crossover-01        true    true        365525935325
 Exit code `0` means every case reproduced, `1` that at least one did not — so a
 drifting engine turns a build red rather than going unnoticed.
 
-## Determinism is the product
-
-- **Recompute, never trust** — a case passes only when a fresh run *reproduces*
-  the frozen report; a stale engine, a changed default, a numerical drift all
-  turn the case red.
-- **Two independent checks** — `passed` (byte-exact report equality) and
-  `hash_match` (canonical-hash equality) are reported separately, so a case whose
-  `expected` and `expected_hash` disagree is caught, not masked.
-- **Canonical hashes** — every report is hashed under the same canonicalization
-  [`wickra-proof`](https://github.com/wickra-lib/wickra-proof) uses (keys sorted,
-  no whitespace, floats quantized to `1e-8`, no `NaN`/`±inf`), so the hash is
-  identical in every language.
-- **Byte-identical across languages and runners** — a `SuiteReport` is re-sorted
-  by case id and is byte-for-byte the same in all ten bindings and between the
-  parallel (rayon) and sequential (WASM) runners; the cross-language golden tests
-  assert it.
-
 ## Status
 
-**Pre-release — functionally complete, CI-verified, not yet published.** The
-core, the CLI, all ten language bindings, the curated case registry, the golden
-corpus, the property + fuzz suites, the benchmarks and one runnable example per
-language are built and green across Linux, macOS and Windows. Packages are not
-yet on the registries. Track progress in [ROADMAP.md](ROADMAP.md).
+**0.1.2 — the current release.** The core, the CLI, all ten language bindings,
+the curated case registry, the golden corpus, the property + fuzz suites, the
+benchmarks and one runnable example per language are built and green across
+Linux, macOS and Windows. Packages are not yet on the registries. Track progress
+in [ROADMAP.md](ROADMAP.md).
 
 ## Documentation
 
@@ -119,6 +104,23 @@ yet on the registries. Track progress in [ROADMAP.md](ROADMAP.md).
   language.
 - [`docs/Cookbook.md`](docs/Cookbook.md) — recipes, including "gate engine
   reproducibility in CI".
+
+## Determinism is the product
+
+- **Recompute, never trust** — a case passes only when a fresh run *reproduces*
+  the frozen report; a stale engine, a changed default, a numerical drift all
+  turn the case red.
+- **Two independent checks** — `passed` (byte-exact report equality) and
+  `hash_match` (canonical-hash equality) are reported separately, so a case whose
+  `expected` and `expected_hash` disagree is caught, not masked.
+- **Canonical hashes** — every report is hashed under the same canonicalization
+  [`wickra-proof`](https://github.com/wickra-lib/wickra-proof) uses (keys sorted,
+  no whitespace, floats quantized to `1e-8`, no `NaN`/`±inf`), so the hash is
+  identical in every language.
+- **Byte-identical across languages and runners** — a `SuiteReport` is re-sorted
+  by case id and is byte-for-byte the same in all ten bindings and between the
+  parallel (rayon) and sequential (WASM) runners; the cross-language golden tests
+  assert it.
 
 ## Quickstart
 
@@ -153,7 +155,16 @@ A **case** is one curated reproducibility unit:
 `cases/suite.json` bundles the cases into a named, id-unique suite. Full schema
 in [`docs/CASES.md`](docs/CASES.md).
 
-## Reproduce the suite in any language
+## Contributing a case
+
+A good case is small, deterministic and non-degenerate (it actually trades).
+Add or reuse a dataset under [`datasets/`](datasets), write the draft with a
+fresh `id`, `description`, `strategy` and `dataset_ref`, then **bless** it — let
+the engine fill in `expected` and `expected_hash` — and add it to
+`cases/suite.json`. The full flow, including the never-edit-by-hand rule, is in
+[`cases/README.md`](cases/README.md) and [`docs/CASES.md`](docs/CASES.md).
+
+## Use in any language
 
 The core is a JSON-over-C-ABI data API (`Benchmark::command_json`) exposed
 natively in Rust, Python, Node.js and WASM, and over the C ABI hub in C, C++, C#,
@@ -176,15 +187,6 @@ quickstarts are in each `bindings/<lang>/README.md`.
 | Go | C ABI (cgo) | Go module |
 | Java | C ABI (FFM/Panama) | Maven |
 | R | C ABI (`.Call`) | R-universe |
-
-## Contributing a case
-
-A good case is small, deterministic and non-degenerate (it actually trades).
-Add or reuse a dataset under [`datasets/`](datasets), write the draft with a
-fresh `id`, `description`, `strategy` and `dataset_ref`, then **bless** it — let
-the engine fill in `expected` and `expected_hash` — and add it to
-`cases/suite.json`. The full flow, including the never-edit-by-hand rule, is in
-[`cases/README.md`](cases/README.md) and [`docs/CASES.md`](docs/CASES.md).
 
 ## Project layout
 
@@ -349,8 +351,20 @@ Report vulnerabilities per [SECURITY.md](SECURITY.md). The threat model is in
 
 ## License
 
-Dual-licensed under either [MIT](LICENSE-MIT) or [Apache-2.0](LICENSE-APACHE), at
-your option.
+Licensed under either of
+
+- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or
+  <http://www.apache.org/licenses/LICENSE-2.0>)
+- MIT license ([LICENSE-MIT](LICENSE-MIT) or <http://opensource.org/licenses/MIT>)
+
+at your option. Use it, fork it, modify it, redistribute it — commercially or
+not — file issues, send pull requests; all welcome.
+
+### Contribution
+
+Unless you explicitly state otherwise, any contribution intentionally submitted
+for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
+dual licensed as above, without any additional terms or conditions.
 
 ## Disclaimer
 

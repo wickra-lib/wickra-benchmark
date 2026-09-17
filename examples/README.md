@@ -1,4 +1,4 @@
-# Examples
+# Wickra Benchmark examples
 
 A runnable example in every language. Each one loads the curated
 `sma-crossover-01` case and its `sma-uptrend` dataset from [`data/`](data/),
@@ -8,43 +8,79 @@ expectation) and `hash_match` (its canonical hash equals the frozen hash). That
 is the whole promise of this repository: the same inputs produce the same bytes,
 in every language.
 
-| Language | Path | Run |
-|----------|------|-----|
-| Rust | [`rust/`](rust/) | `cargo run -p wickra-benchmark-example` |
-| Python | [`python/run.py`](python/run.py) | `pip install wickra-benchmark && python examples/python/run.py` |
-| Node.js | [`node/`](node/) | `cd examples/node && npm install && node run.js` |
-| WebAssembly | [`wasm/run.cjs`](wasm/run.cjs) | `wasm-pack build bindings/wasm --target nodejs && node examples/wasm/run.cjs` |
-| C / C++ | [`c/`](c/) | see below |
-| Go | [`go/`](go/) | `cd examples/go && go run .` |
-| C# | [`csharp/Run/`](csharp/Run/) | `dotnet run --project examples/csharp/Run` |
-| Java | [`java/Run.java`](java/Run.java) | see the header comment |
-| R | [`r/run.R`](r/run.R) | `Rscript examples/r/run.R` |
+## Rust — `examples/rust/`
 
-Every one of them is executed by CI, in the language job that already has the
-toolchain — building an example is not the same as running it, and only a run
-proves the case still reproduces through that surface.
+| Example | What it does |
+| --- | --- |
+| `src/main.rs` | A runnable Rust example: load a curated benchmark case and its dataset, then recompute the report with the real engine and confirm it reproduces — both `passed` (the report matches the frozen expectat |
 
-The native bindings (Python, Node.js, WebAssembly) load their own compiled
-library. The bindings that go through the C ABI (Go, C#, Java, R, and the C/C++
-example itself) need the C ABI library built first:
+## C / C++ — `examples/c/`
+
+Build the library first (`cargo build -p wickra-benchmark-c --release`), then build and run
+the examples via CMake, as the CI C ABI job does:
 
 ```bash
-cargo build --release -p wickra-benchmark-c
-```
-
-## C / C++
-
-The C and C++ examples build with CMake and run under ctest:
-
-```bash
-cargo build --release -p wickra-benchmark-c
 cmake -S examples/c -B examples/c/build
 cmake --build examples/c/build --config Release
 ctest --test-dir examples/c/build -C Release --output-on-failure
 ```
 
-On Windows the build copies `wickra_benchmark.dll` next to each executable, since
-there is no rpath.
+| Example | What it does |
+| --- | --- |
+| `run.c` | A minimal C example: load a curated benchmark case and its dataset, recompute |
+| `run.cpp` | A minimal C++ example: load a curated benchmark case and its dataset, recompute the report with the wickra-benchmark C ABI, and assert it reproduces — both `passed` (the report matches the frozen expe |
+
+## C# — `examples/csharp/`
+
+| Example | What it does |
+| --- | --- |
+| `Run/Program.cs` | A runnable C# example: load a curated benchmark case and its dataset, recompute the report with the wickra-benchmark C ABI binding, and assert it reproduces — both `passed` (the report matches the fro |
+
+## Go — `examples/go/`
+
+| Example | What it does |
+| --- | --- |
+| `run.go` | A runnable Go example: load a curated benchmark case and its dataset, recompute the report with the wickra-benchmark C ABI binding, and assert it reproduces — both `passed` (the report matches the fro |
+
+## R — `examples/r/`
+
+| Example | What it does |
+| --- | --- |
+| `run.R` | A runnable R example: load a curated benchmark case and its dataset, recompute the report with the wickra-benchmark C ABI binding, and assert it reproduces — both `passed` (the report matches the froz |
+
+## Java — `examples/java/`
+
+| Example | What it does |
+| --- | --- |
+| `Run.java` | A runnable Java example: load a curated benchmark case and its dataset, recompute the report with the wickra-benchmark C ABI binding, and assert it reproduces — both `passed` (the report matches the f |
+
+## Python — `examples/python/`
+
+| Example | What it does |
+| --- | --- |
+| `run.py` | A runnable Python example: load a curated benchmark case and its dataset, |
+
+## Node.js — `examples/node/`
+
+| Example | What it does |
+| --- | --- |
+| `run.js` | A runnable Node.js example: load a curated benchmark case and its dataset, recompute the report with the wickra-benchmark binding, and assert it reproduces — both `passed` (the report matches the froz |
+
+## WASM — `examples/wasm/`
+
+Build the WASM package, serve the repository root, and open the page in a browser;
+the module script inside it is what runs (CI parses it with `node --check`):
+
+```bash
+wasm-pack build bindings/wasm --target web
+python -m http.server 8000     # then open http://localhost:8000/examples/wasm/
+```
+
+## Example datasets
+
+The examples read from [`examples/data/`](data/): . The
+cross-language golden fixtures, which every binding is checked against byte for
+byte, live in [`../golden/`](../golden).
 
 ## Data
 
@@ -65,23 +101,3 @@ cargo build --release -p wickra-benchmark
   --case examples/data/cases/sma-crossover-01.json \
   --data-root examples/data/datasets
 ```
-
-## Expected output
-
-Every example prints the version and confirms the case reproduces:
-
-```text
-wickra-benchmark 0.1.1
-sma-crossover-01: REPRODUCED (passed + hash_match)
-```
-
-The Rust and Python examples print the two booleans explicitly:
-
-```text
-wickra-benchmark 0.1.1
-sma-crossover-01: passed=true hash_match=true
-REPRODUCED (passed + hash_match)
-```
-
-The CLI exits `0` when every case reproduces and `1` when any case fails, so a
-non-reproducible engine turns a CI build red.

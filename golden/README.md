@@ -1,4 +1,4 @@
-# Cross-language golden fixtures
+# Golden fixtures
 
 This directory is the **cross-language parity harness**. Every binding — Rust,
 Python, Node.js, WASM, C, C++, C#, Go, Java, R — must turn a given command
@@ -48,7 +48,7 @@ Every `run_case`/`run_suite` fixture is *blessed*: its `expected`/`expected_hash
 come from the engine itself, so each response has `passed: true` and, for
 `run_suite`, `failed: 0`.
 
-## Regenerating
+## Blessing
 
 The fixtures are derived, not authored. Rebuild them whenever the datasets,
 cases, or the engine's report shape changes — from the repository root, drive
