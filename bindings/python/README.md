@@ -1,4 +1,17 @@
+<p align="center">
+  <a href="https://wickra.org"><img src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/wickra-banner.webp?v=514" alt="Wickra Benchmark — a reproducible, golden-verified benchmark suite for quant backtests, recomputable byte-for-byte in ten languages" width="100%"></a>
+</p>
+
+[![CI](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/ci.svg)](https://github.com/wickra-lib/wickra-benchmark/actions/workflows/ci.yml)
+[![codecov](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/codecov.svg)](https://codecov.io/gh/wickra-lib/wickra-benchmark)
+[![PyPI](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/pypi.svg)](https://pypi.org/project/wickra-benchmark/)
+[![License: MIT OR Apache-2.0](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/license.svg)](https://github.com/wickra-lib/wickra-benchmark#license)
+
 # Wickra Benchmark — Python
+
+---
+
+**Part of the [Wickra ecosystem](https://github.com/wickra-lib) — for Python. `pip install wickra-benchmark` — prebuilt wheels for Linux, macOS and Windows, nothing to compile.**
 
 Recompute a curated benchmark case or suite with the deterministic Wickra engine
 and confirm its report and hash, byte-for-byte. The value is the curated,
@@ -7,11 +20,14 @@ for trading-strategy reproducibility".
 
 ## Install
 
-```sh
+```bash
 pip install wickra-benchmark
 ```
 
-## Usage
+Pre-built wheels ship for Linux, macOS and Windows — there is nothing to
+compile and no C library to track down.
+
+## Quick start
 
 Everything goes through a `Benchmark` driven by JSON commands — the same command
 protocol every Wickra binding shares, so this Python front-end drives the exact
@@ -37,7 +53,7 @@ result = json.loads(bench.command(json.dumps({"cmd": "run_case", "case": case, "
 print("passed" if result["passed"] and result["hash_match"] else "failed")
 ```
 
-## Commands
+### Commands
 
 | `cmd`         | Payload                          | Response                                   |
 |---------------|----------------------------------|--------------------------------------------|
@@ -52,6 +68,45 @@ list (the FFI boundary has no filesystem, so datasets are supplied inline).
 Domain errors (a bad case, an unknown command) come back in-band as
 `{"ok":false,"error":...}`. A malformed command envelope raises `ValueError`.
 
+## Benchmark
+
+Every binding forwards to the same data-driven Rust core, so what this one adds is
+the call overhead of PyO3, not a different result. The core's throughput is
+measured by the repository's benchmark suite and the nightly `bench.yml` run; the
+numbers, the machine and how to reproduce them are in the repository
+[BENCHMARKS.md](https://github.com/wickra-lib/wickra-benchmark/blob/main/BENCHMARKS.md).
+
+## Documentation
+
+The full guide, the spec reference and the API documentation live in the main
+repository and the documentation site:
+
+- **Repository:** <https://github.com/wickra-lib/wickra-benchmark>
+- **Docs** (guides, spec reference, cookbook): <https://benchmark.wickra.org>
+- **Runnable example:** [`examples/python/`](https://github.com/wickra-lib/wickra-benchmark/tree/main/examples/python)
+
+Wickra Benchmark ships native bindings for Python, Node.js, WASM and Rust, plus a C ABI hub that any
+C-capable language (C, C++, C#, Go, Java, R) links against — all forwarding to the
+same data-driven, `unsafe`-forbidden Rust core.
+
+## Security
+
+Found a security issue? **Please don't open a public issue.** Report it privately
+via the repository's *Security* tab (*"Report a vulnerability"*) or email
+**support@wickra.org** with a subject line starting `[wickra security]`. Full
+policy: <https://github.com/wickra-lib/wickra-benchmark/blob/main/SECURITY.md>.
+
+## Disclaimer
+
+`wickra-benchmark` is research and engineering tooling, not financial advice. A
+passing case attests only that a report is the deterministic result of a given
+strategy over given data — it makes no claim about the quality, profitability or
+future performance of any strategy, nor about whether the data is representative
+of any market. Trading carries risk; you are responsible for your own decisions.
+`wickra-benchmark` is free software you run yourself: no hosted service, no data
+collection, no warranty.
+
 ## License
 
-MIT OR Apache-2.0.
+Licensed under either of [Apache-2.0](https://github.com/wickra-lib/wickra-benchmark/blob/main/LICENSE-APACHE)
+or [MIT](https://github.com/wickra-lib/wickra-benchmark/blob/main/LICENSE-MIT) at your option.
