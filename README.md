@@ -30,11 +30,15 @@ curated `(strategy, dataset, expected report)` case, recompute it, and confirm i
 reproduces byte-for-byte — the same result in ten languages, or the build goes
 red.**
 
+> **▶ Live demos:** the backtester compiled to WebAssembly, an equity curve building bar by bar — **[backtest-live.wickra.org](https://backtest-live.wickra.org)**;
+> one StrategySpec side by side in Python, Rust, JS and Go — **[playground.wickra.org](https://playground.wickra.org)**;
+> all 514 indicators of the core over a real Binance feed — **[live.wickra.org](https://live.wickra.org)**. Zero backend, all of them.
+
 **Part of the [Wickra ecosystem](https://github.com/wickra-lib).** Built on the
-> same deterministic backtest engine and ten-language binding surface as
-> [wickra-backtest](https://github.com/wickra-lib/wickra-backtest),
-> [wickra-proof](https://github.com/wickra-lib/wickra-proof),
-> [wickra-verify](https://github.com/wickra-lib/wickra-verify) and the rest.
+same deterministic backtest engine and ten-language binding surface as
+[wickra-backtest](https://github.com/wickra-lib/wickra-backtest),
+[wickra-proof](https://github.com/wickra-lib/wickra-proof),
+[wickra-verify](https://github.com/wickra-lib/wickra-verify) and the rest.
 
 `wickra-benchmark` is the "ImageNet for trading-strategy reproducibility": not a
 new backtest engine, but the curated, hash-pinned **suite** you check an engine
