@@ -83,7 +83,7 @@ drifting engine turns a build red rather than going unnoticed.
 
 ## Status
 
-**0.1.2 — the current release.** The core, the CLI, all ten language bindings,
+**0.1.3 — the current release.** The core, the CLI, all ten language bindings,
 the curated case registry, the golden corpus, the property + fuzz suites, the
 benchmarks and one runnable example per language are built and green across
 Linux, macOS and Windows. Packages are not yet on the registries. Track progress
