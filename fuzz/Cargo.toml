@@ -16,7 +16,7 @@ serde_json = "1"
 # ends up with two `wickra-backtest-core` crates whose types do not interoperate
 # and the targets stop compiling.
 wickra-benchmark-core = { path = "../crates/benchmark-core" }
-wickra-backtest-core = "=0.1.6"
+wickra-backtest-core = "=0.1.7"
 
 # Detach from the parent workspace — cargo-fuzz builds this crate on its own with
 # sanitizer flags on a nightly toolchain.
