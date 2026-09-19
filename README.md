@@ -2,8 +2,8 @@
   <a href="https://wickra.org"><img src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/wickra-banner.webp?v=514-7" alt="Wickra Benchmark — a reproducible, golden-verified benchmark suite for quant backtests, recomputable byte-for-byte in ten languages" width="100%"></a>
 </p>
 
-[![Built on Wickra](https://img.shields.io/badge/built%20on-wickra-3b82f6)](https://github.com/wickra-lib/wickra)
-[![Status](https://img.shields.io/badge/status-pre--release-orange)](https://github.com/wickra-lib/wickra-benchmark)
+[![Built on Wickra](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/built-on.svg)](https://github.com/wickra-lib/wickra)
+[![Status](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/status.svg)](https://github.com/wickra-lib/wickra-benchmark)
 [![CI](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/ci.svg)](https://github.com/wickra-lib/wickra-benchmark/actions/workflows/ci.yml)
 [![CodeQL](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/codeql.svg)](https://github.com/wickra-lib/wickra-benchmark/actions/workflows/codeql.yml)
 [![codecov](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/codecov.svg)](https://codecov.io/gh/wickra-lib/wickra-benchmark)
@@ -21,7 +21,7 @@
 [![Build provenance](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/provenance.svg)](https://github.com/wickra-lib/wickra-benchmark/attestations)
 [![Docs](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/docs.svg)](https://benchmark.wickra.org)
 [![Verified across 10 languages](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/verified.svg)](golden/)
-[![Reproduced across 10 languages](https://img.shields.io/badge/reproduced%20across-10%20languages-3b82f6)](#reproduce-the-suite-in-any-language)
+[![Reproduced across 10 languages](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/wickra-benchmark/reproduced.svg)](#reproduce-the-suite-in-any-language)
 
 ---
 
