@@ -47,7 +47,7 @@ categories = ["finance", "command-line-utilities"]
 # version() is the engine the expected report is bound to, so bumping it re-shapes
 # every frozen report — re-bless the corpus in the same commit:
 #   WICKRA_BLESS=1 cargo test -p wickra-benchmark-core --test golden
-wickra-backtest-core = "=0.1.7"
+wickra-backtest-core = "=0.1.8"
 # Workspace-internal core, referenced by the CLI, bench and bindings.
 wickra-benchmark-core = { version = "0.1.4", path = "crates/benchmark-core" }
 # The indicator core, underneath the engine. Not called on the recompute path --
