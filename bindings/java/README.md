@@ -31,14 +31,14 @@ Maven:
 <dependency>
   <groupId>org.wickra</groupId>
   <artifactId>wickra-benchmark</artifactId>
-  <version>0.1.4</version>
+  <version>0.1.5</version>
 </dependency>
 ```
 
 Gradle:
 
 ```kotlin
-implementation("org.wickra:wickra-benchmark:0.1.4")
+implementation("org.wickra:wickra-benchmark:0.1.5")
 ```
 
 The native library ships prebuilt per platform inside the jar and is
