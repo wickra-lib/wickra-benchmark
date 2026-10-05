@@ -1,6 +1,6 @@
 {
   "name": "wickra-benchmark",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "A reproducible, golden-verified benchmark suite for quant backtests: recompute a curated case or suite with the deterministic Wickra engine and confirm its report and hash. Node bindings powered by Rust.",
   "author": "kingchenc <support@wickra.org>",
   "main": "index.js",
@@ -47,12 +47,12 @@
     "node": ">= 22"
   },
   "optionalDependencies": {
-    "wickra-benchmark-darwin-arm64": "0.1.5",
-    "wickra-benchmark-darwin-x64": "0.1.5",
-    "wickra-benchmark-linux-arm64-gnu": "0.1.5",
-    "wickra-benchmark-linux-x64-gnu": "0.1.5",
-    "wickra-benchmark-win32-arm64-msvc": "0.1.5",
-    "wickra-benchmark-win32-x64-msvc": "0.1.5"
+    "wickra-benchmark-darwin-arm64": "0.2.0",
+    "wickra-benchmark-darwin-x64": "0.2.0",
+    "wickra-benchmark-linux-arm64-gnu": "0.2.0",
+    "wickra-benchmark-linux-x64-gnu": "0.2.0",
+    "wickra-benchmark-win32-arm64-msvc": "0.2.0",
+    "wickra-benchmark-win32-x64-msvc": "0.2.0"
   },
   "scripts": {
     "build": "napi build --platform --release",
