@@ -6,6 +6,20 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-06
+
+A follow-up release on the wickra 2.0 family: the suite, its scenarios and its
+scores are unchanged -- none of them uses an indicator the formula audit
+corrected.
+
+### Changed
+
+- **Built on wickra 2.0 and wickra-backtest 0.2.0.** `wickra-core` moves from 1.0
+  to 2.0, the formula-audit release of the indicator core, and the exact pin on
+  `wickra-backtest-core` from =0.1.9 to =0.2.0 (root and `fuzz/`); every tracked
+  lockfile follows. The golden `version.json` records the new engine and suite
+  versions; every other golden response is byte-identical.
+
 ## [0.1.5] - 2026-09-27
 
 A follow-up release: the suite, its scenarios and its scores are unchanged. It
@@ -522,7 +536,8 @@ one of them failed after the packages were already live.
   `webpki-roots` for a TLS stack this crate does not have — it is not in the
   dependency graph at all.
 
-[Unreleased]: https://github.com/wickra-lib/wickra-benchmark/compare/v0.1.5...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra-benchmark/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/wickra-lib/wickra-benchmark/compare/v0.1.5...v0.2.0
 [0.1.5]: https://github.com/wickra-lib/wickra-benchmark/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/wickra-lib/wickra-benchmark/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/wickra-lib/wickra-benchmark/compare/v0.1.2...v0.1.3
