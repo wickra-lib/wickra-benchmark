@@ -16,8 +16,8 @@ security fixes.
 
 | Version | Supported |
 |---------|-----------|
-| 0.2.1 (latest) | :white_check_mark: |
-| < 0.2.1        | :x:                |
+| 0.2.2 (latest) | :white_check_mark: |
+| < 0.2.2        | :x:                |
 
 ## Reporting a vulnerability
 
