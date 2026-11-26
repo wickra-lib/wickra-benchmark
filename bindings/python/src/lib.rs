@@ -48,7 +48,8 @@ impl PyBenchmark {
 
 /// The native module (`wickra_benchmark._wickra_benchmark`).
 #[pymodule]
-fn _wickra_benchmark(module: &Bound<'_, PyModule>) -> PyResult<()> {
+#[pyo3(name = "_wickra_benchmark")]
+fn wickra_benchmark_extension(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add("__version__", env!("CARGO_PKG_VERSION"))?;
     module.add_class::<PyBenchmark>()?;
     Ok(())
