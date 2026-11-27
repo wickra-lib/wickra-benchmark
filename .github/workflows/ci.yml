@@ -7,6 +7,7 @@ on:
   # the whole matrix, so a stacked or long-lived branch pays for the full run
   # twice — once against its base and again when that base merges.
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     branches: [main]
 
 permissions:
@@ -18,6 +19,7 @@ concurrency:
 
 jobs:
   test:
+    if: ${{ !github.event.pull_request.draft }}
     name: Test (${{ matrix.os }}, ${{ matrix.features }})
     strategy:
       fail-fast: false
@@ -50,6 +52,7 @@ jobs:
         run: cargo run --release -p wickra-benchmark-example
 
   lint:
+    if: ${{ !github.event.pull_request.draft }}
     name: Format & Clippy
     runs-on: ubuntu-latest
     timeout-minutes: 20 # backstop against a hung job, not a budget
@@ -66,6 +69,7 @@ jobs:
       - run: cargo clippy --workspace --all-targets --no-default-features -- -D warnings
 
   msrv:
+    if: ${{ !github.event.pull_request.draft }}
     name: MSRV workspace (1.86)
     runs-on: ubuntu-latest
     timeout-minutes: 20 # backstop against a hung job, not a budget
@@ -86,6 +90,7 @@ jobs:
           --exclude wickra-benchmark-node
 
   msrv-node:
+    if: ${{ !github.event.pull_request.draft }}
     name: MSRV node (1.88)
     runs-on: ubuntu-latest
     timeout-minutes: 20 # backstop against a hung job, not a budget
@@ -100,6 +105,7 @@ jobs:
       - run: cargo build -p wickra-benchmark-node
 
   binding-surface:
+    if: ${{ !github.event.pull_request.draft }}
     name: Binding surface parity
     runs-on: ubuntu-latest
     timeout-minutes: 10 # a static check; if it is not done in ten minutes it is stuck
@@ -164,6 +170,7 @@ jobs:
   # A job-level continue-on-error would not do: the check run still concludes
   # `failure`, the commit shows red and a release gate reading check runs stops.
   links:
+    if: ${{ !github.event.pull_request.draft }}
     name: External links (non-blocking)
     runs-on: ubuntu-latest
     timeout-minutes: 10 # backstop against a hung job, not a budget
@@ -194,6 +201,7 @@ jobs:
   # the current source against the last release on crates.io and says which bump
   # the change actually requires.
   semver:
+    if: ${{ !github.event.pull_request.draft }}
     name: Semver compatibility
     runs-on: ubuntu-latest
     timeout-minutes: 30 # backstop against a hung job, not a budget
@@ -246,6 +254,7 @@ jobs:
   # wheel builds in both containers and that the module it produces actually
   # imports under musl, which is a different libc, not a different flag.
   python-wheel-container-smoke:
+    if: ${{ !github.event.pull_request.draft }}
     name: Linux wheel in ${{ matrix.manylinux }}
     strategy:
       fail-fast: false
@@ -306,6 +315,7 @@ jobs:
                    && python -c \"import wickra_benchmark as wb; print(wb.__name__, 'imported')\""
 
   supply-chain:
+    if: ${{ !github.event.pull_request.draft }}
     name: cargo-deny + osv-scanner
     runs-on: ubuntu-latest
     timeout-minutes: 30 # backstop against a hung job, not a budget
@@ -357,6 +367,7 @@ jobs:
           .
 
   coverage:
+    if: ${{ !github.event.pull_request.draft }}
     name: Coverage
     runs-on: ubuntu-latest
     timeout-minutes: 30 # backstop against a hung job, not a budget
@@ -392,6 +403,7 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   fuzz-smoke:
+    if: ${{ !github.event.pull_request.draft }}
     name: Fuzz (smoke)
     runs-on: ubuntu-latest
     timeout-minutes: 30 # backstop against a hung job, not a budget
@@ -426,6 +438,7 @@ jobs:
         working-directory: fuzz
 
   python:
+    if: ${{ !github.event.pull_request.draft }}
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -484,6 +497,7 @@ jobs:
         run: python examples/python/run.py
 
   node:
+    if: ${{ !github.event.pull_request.draft }}
     name: Node ${{ matrix.node-version }} on ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -558,6 +572,7 @@ jobs:
             });'
 
   wasm:
+    if: ${{ !github.event.pull_request.draft }}
     name: WASM
     runs-on: ubuntu-latest
     timeout-minutes: 30 # backstop against a hung job, not a budget
@@ -593,6 +608,7 @@ jobs:
         run: node examples/wasm/run.cjs
 
   c-abi:
+    if: ${{ !github.event.pull_request.draft }}
     name: C ABI on ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -638,6 +654,7 @@ jobs:
           ctest --test-dir examples/c/build -C Release --output-on-failure
 
   go:
+    if: ${{ !github.event.pull_request.draft }}
     name: Go ${{ matrix.go }} on ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -708,6 +725,7 @@ jobs:
           go run .
 
   csharp:
+    if: ${{ !github.event.pull_request.draft }}
     name: C# on ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -740,6 +758,7 @@ jobs:
         run: dotnet pack bindings/csharp/WickraBenchmark/WickraBenchmark.csproj -c Release -o nupkg
 
   java:
+    if: ${{ !github.event.pull_request.draft }}
     name: Java ${{ matrix.java }} on ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -789,6 +808,7 @@ jobs:
                  -cp "bindings/java/target/classes${{ runner.os == 'Windows' && ';' || ':' }}examples/java/out" Run
 
   r:
+    if: ${{ !github.event.pull_request.draft }}
     name: R on ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -841,6 +861,7 @@ jobs:
           Rscript examples/r/run.R
 
   dataset-manifest:
+    if: ${{ !github.event.pull_request.draft }}
     name: Dataset manifest
     runs-on: ubuntu-latest
     timeout-minutes: 15 # backstop against a hung job, not a budget
@@ -869,7 +890,7 @@ jobs:
   # checks are left out on purpose -- an outside outage must not hold a merge.
   ci-ok:
     name: ci-ok
-    if: always()
+    if: ${{ !github.event.pull_request.draft && (always()) }}
     needs:
       - test
       - lint
